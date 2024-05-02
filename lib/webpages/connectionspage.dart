@@ -1,24 +1,15 @@
 import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../authentication/auth.dart';
+import '../webcomponents/donor_company_topbar.dart';
 import '../webcomponents/profilepicture.dart';
-import 'company_donor/companyprofilepage.dart';
-import 'company_donor/donationofinterestspage.dart';
-import 'company_donor/donorcompanydonationhistory.dart';
-import 'company_donor/donorpaymentpage.dart';
-import 'company_donor/donorprofile.dart';
-import 'company_donor/eventhistory.dart';
-import 'company_donor/eventsignuppage.dart';
-import 'company_donor/grantcreationpage.dart';
-import 'company_donor/myeventspage.dart';
-import 'company_donor/nonmondon.dart';
-import 'notificationspage.dart';
-import 'np/grantapp.dart';
-import 'np/npprofilepage.dart';
+import '../webcomponents/usertopbar.dart';
 
 
 class ConnectionsPage extends StatefulWidget {
@@ -40,7 +31,7 @@ class User {
   Map<String, dynamic> toJson() {
     return {
       'userId': userId,
-      'userName': name,
+      'userName': userName,
       'email': email,
       //'aboutUs': aboutUs,
       'userType': userType,

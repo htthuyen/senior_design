@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:givehub/webpages/np/grantstatus.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../authentication/auth.dart';
-import 'company_donor/companyprofilepage.dart';
-import 'company_donor/donorcompanydonationhistory.dart';
-import 'company_donor/donorprofile.dart';
-import 'np/createevent.dart';
-import 'np/eventnp.dart';
+import '../webcomponents/donor_company_topbar.dart';
+import '../webcomponents/usertopbar.dart';
 import 'np/grantapp.dart';
-import 'np/needs.dart';
-import 'np/npdonationreview.dart';
-import 'np/npprofilepage.dart';
 
 
 

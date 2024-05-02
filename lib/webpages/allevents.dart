@@ -1,21 +1,12 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:givehub/webpages/np/grantstatus.dart';
-
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:firebase_database/firebase_database.dart';
-
 import '../authentication/auth.dart';
-import 'company_donor/companyprofilepage.dart';
-import 'company_donor/donorcompanydonationhistory.dart';
-import 'company_donor/donorprofile.dart';
+import '../webcomponents/np_topbar.dart';
+import '../webcomponents/usertopbar.dart';
 import 'company_donor/eventsignuppage.dart';
-import 'np/createevent.dart';
 import 'np/eventnp.dart';
-import 'np/grantapp.dart';
-import 'np/needs.dart';
-import 'np/npdonationreview.dart';
-import 'np/npprofilepage.dart';
 
 
 class EventforUserS {
@@ -129,7 +120,7 @@ class _AllEventsPageState extends State<AllEventsPage> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         key: _scaffoldKey,
-        appBar:  appBar: UserTopBar(),
+        appBar: UserTopBar(),
       endDrawer: NpTopBar(),
         body: CustomScrollView(
           slivers: [
