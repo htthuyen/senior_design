@@ -179,7 +179,7 @@ class _GrantAppState extends State<GrantApp> {
     return Scaffold(
         key: _scaffoldKey,
         appBar: UserTopBar(),
-              endDrawer: NpEndDrawer(),
+              endDrawer: NpTopDrawer(),
         body: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
