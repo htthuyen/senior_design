@@ -1,0 +1,1172 @@
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
+import 'package:givehub/webpages/np/grantstatus.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../authentication/auth.dart';
+import '../company_donor/companyprofilepage.dart';
+import '../company_donor/donorcompanydonationhistory.dart';
+import '../company_donor/donorprofile.dart';
+import '../company_donor/myeventspage.dart';
+import 'eventnp.dart';
+import 'grantapp.dart';
+import 'needs.dart';
+import 'npdonationreview.dart';
+import 'npprofilepage.dart';
+
+
+class CreateEvent extends StatefulWidget {
+  @override
+  _CreateEventState createState() => _CreateEventState();
+}
+
+class _CreateEventState extends State<CreateEvent> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String registerStatus ='';
+  bool _isRegistering = false;
+  DateTime _time = DateTime.now();
+
+  void _registerEvent() async {
+    if (_formKey.currentState!.validate()) {
+      // Split the date and time from the combined input
+      //List<String> dateTimeParts = dateTimeController.text.split(' ');
+      //String date = dateTimeParts[0]; // Assuming date comes first
+      //String time = dateTimeParts[1]; // Assuming time comes second
+      setState(() {
+        _isRegistering = true;
+      });
+
+      try {
+        // Register the event and retrieve the organization ID
+      String orgId = await registerEventAndGetOrgId();
+
+      // Retrieve all users subscribed to the organization
+      List subscribedUserIds = await getUsersSubscribedToOrganization(orgId);
+
+      // Create notifications for each subscribed user
+      for (String userId in subscribedUserIds) {
+        createNotification(userId: userId, orgName: organizationNameController.text);
+      }
+        await registerEvent(
+          context,
+          organizationNameController.text,
+          eventNameController.text,
+          dateController.text,
+          timeController.text,
+          locationController.text,
+          contactController.text,
+          eventDescriptionController.text,
+        );
+        //getSubscriptionsFromDatabase();
+        await createNotification(userId: uid!, orgName: organizationNameController.text);
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Center(
+              child: Container(
+                padding: EdgeInsets.all(20),
+                width: 600,
+                height: 500,
+                child: AlertDialog(
+                  backgroundColor: Color(0xFFFF3B3F).withOpacity(1),
+                  content: Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Text(
+                      'Event registered successfully!',
+                      style: GoogleFonts.oswald(
+                        fontSize: 30,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  actions: <Widget>[
+                    Center(
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MyEventsPage(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Continue',
+                          style: GoogleFonts.oswald(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0x555555).withOpacity(1),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      } catch (error) {
+        print('Event Registration Error: $error');
+        setState(() {
+          registerStatus = 'Error occurred while registering event';
+          _isRegistering = false;
+        });
+      }
+    } else {
+      print('Form is invalid');
+      setState(() {
+        _isRegistering = false;
+      });
+    }
+  }
+  Future<String> registerEventAndGetOrgId() async {
+  final ref = FirebaseDatabase.instance.reference().child('events'); // Assuming events are stored under the 'events' node
+
+  try {
+    // Perform event registration and retrieve the event ID
+    DatabaseReference eventRef = ref.push();
+    String eventId = eventRef.key ?? ''; // Get the unique event ID generated by push()
+
+    // Create an event object with the required data
+    Map<String, dynamic> eventData = {
+      'organizationId': 'your_organization_id', // Replace with the actual organization ID associated with the event
+      'eventName': eventNameController.text,
+      // Add other event details as needed
+    };
+
+    // Save the event data to the database
+    await eventRef.set(eventData);
+
+    // Return the organization ID associated with the event
+    return eventData['organizationId'];
+  } catch (error) {
+    print('Error registering event: $error');
+    throw error; // Rethrow the error to handle it in the calling function
+  }
+}
+Future<List> getUsersSubscribedToOrganization(String orgId) async {
+  final ref = FirebaseDatabase.instance.reference();
+  try {
+    var snapshot = await ref.child('subscriptions').child(orgId).once();
+    if (snapshot.snapshot.value != null) {
+      Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map<dynamic, dynamic>;
+      if (data != null) {
+        return data.keys.toList(); // Return a list of user IDs subscribed to the organization
+      }
+    }
+  } catch (e) {
+    print('Error retrieving subscriptions: $e');
+  }
+  return [];
+}
+  Future<void> createNotification({
+      required String userId,
+      required String orgName,
+    }) async {
+      try {
+        final notificationsRef = FirebaseDatabase.instance.reference().child('notifications');
+        final bool userSubscribed = await (isSubscribed(userId, orgName));
+        print(userSubscribed);
+        // Check if the user is subscribed to the organization
+        if (userSubscribed) {
+          final notificationData = {
+            'type': 'event',
+            'detail': '$orgName has created a new event: ${eventNameController.text}',
+            'orgName': orgName,
+            'userId': userId,
+          };
+
+          notificationsRef.push().set(notificationData).then((_) {
+            print('Notification created successfully.');
+          }).catchError((error) {
+            print('Error creating notification: $error');
+          });
+        } else {
+          print('User is not subscribed to $orgName. Skipping notification creation.');
+        }
+      } catch (e) {
+        print('Error creating notification: $e');
+      }
+    }
+
+  // Text Editing Controllers
+  TextEditingController organizationNameController = TextEditingController();
+  TextEditingController eventNameController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController contactController = TextEditingController();
+  TextEditingController eventDescriptionController = TextEditingController();
+ //final _formKey = GlobalKey<FormState>();
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Logged Out Successfully',
+            style: GoogleFonts.oswald(
+              color: Color(0x555555).withOpacity(1), 
+              fontWeight: FontWeight.bold,
+              fontSize: 30,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+              
+                signOut().then((_) {
+                  
+                  Navigator.pushNamed(context, '/welcome');
+                });
+              },
+              child: Text(
+                'OK',
+                style: GoogleFonts.oswald(
+                  color: Color(0x555555).withOpacity(1), 
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _handleLogout(BuildContext context) {
+    _showLogoutDialog(context);
+  }
+   @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          color: Colors.white, 
+        ),
+        title: GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, '/welcome');
+          },
+          child: Row(
+            children: [
+              Text(
+                'GiveHub',
+                style: GoogleFonts.oswald(
+                  color: Colors.white,
+                  fontSize: 30,
+                ),
+              ),
+            ],
+          ),
+        ),
+        centerTitle: false,
+        backgroundColor: const Color(0xFFFF3B3F),
+        actions: [
+          IconButton(
+            onPressed: () {
+              
+            },
+            icon: Icon(Icons.search, color: Colors.white),
+          ),
+          IconButton(
+            onPressed: () {
+              _scaffoldKey.currentState!.openEndDrawer();
+            },
+            icon: Icon(Icons.menu, color: Colors.white),
+          ),
+        ],
+      ),
+      endDrawer: Drawer(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.5, 
+          child: Container(
+            color: const Color(0xFFFF3B3F), 
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF3B3F),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Menu',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 24,
+                          ),
+                        ),
+                        Divider(
+                          color: Color(0xFFF3B3F),
+                          thickness: .5,
+                        ),
+                      ],
+                    ),
+                  ),
+                  ExpansionTile(
+                    title: Text(
+                      'Account Information',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                     collapsedIconColor: Colors.white,
+                    trailing: Icon(Icons.expand_more, color: Colors.white), 
+                    children: [
+                      ListTile(
+                        title: Text(
+                          'Edit Profile',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () async {
+                          //final isValid = _formKey.currentState!.validate();
+                               
+                            String? userType = await getUserTypeFromDatabase(uid!);
+                            print(userType);
+                            if (userType == 'Nonprofit Organization') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NPProfilePage()));
+                            } else if (userType == 'Individual Donor') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DonorProfilePage()));
+                            } else if (userType == 'Company') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CompanyProfilePage()));
+                            }
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'My Profile',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () async {
+                          //final isValid = _formKey.currentState!.validate();
+                               
+                            String? userType = await getUserTypeFromDatabase(uid!) as String?;
+                            if (userType == 'Nonprofit Organization') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NPProfilePage()));
+                            } else if (userType == 'Individual Donor') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DonorProfilePage()));
+                            } else if (userType == 'Company') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CompanyProfilePage()));
+                            }
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Update Needs',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                         Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                              NeedsPage())
+                            );
+                        },
+                      ),
+                    ],
+                  ),
+                  ExpansionTile(
+                    title: Text(
+                      'Donation Center',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                     collapsedIconColor: Colors.white,
+                    trailing: Icon(Icons.expand_more, color: Colors.white), 
+                    children: [
+                      ListTile(
+                        title: Text(
+                          'Donation Requests',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                           Navigator.push(context, new MaterialPageRoute(
+                                                builder: (context) =>
+                                                  NPDonationReview()
+                           ), ); 
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Donation History',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                            DonationHistoryDonorCompany())
+                          );
+                        },
+                      ),
+                    ],
+                  ), 
+                  ExpansionTile(
+                    title: Text(
+                      'Event Center',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                     collapsedIconColor: Colors.white,
+                    trailing: Icon(Icons.expand_more, color: Colors.white), 
+                    children: [
+                      ListTile(
+                        title: Text(
+                          'Create Event',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(context, new MaterialPageRoute(
+                                                builder: (context) =>
+                                                  CreateEvent())
+                                                );
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Your Events',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                         Navigator.push(context, new MaterialPageRoute(
+                                                builder: (context) =>
+                                                  EventsNP())
+                                                );
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Edit Event',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                         Navigator.push(context, new MaterialPageRoute(
+                                                builder: (context) =>
+                                                  EventsNP())
+                                                );
+                        },
+                      ),
+                    ],
+                  ),
+                  ExpansionTile(
+                    title: Text(
+                      'Grant Center',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    collapsedIconColor: Colors.white,
+                    trailing: Icon(Icons.expand_more, color: Colors.white), 
+                    children: [
+                      ListTile(
+                        title: Text(
+                          'Apply for a Grant',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                           Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                            GrantApp())
+                          );
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Application Status',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                            GrantStatusPage())
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Notifications',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                     Navigator.pushNamed(context, '/notifications');
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Subscriptions',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                      
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Logout',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                      _showLogoutDialog(context);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 75, right: 75, top: 50, bottom: 75),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Create Event',
+                    style: GoogleFonts.oswald(
+                      color: const Color(0x555555).withOpacity(1),
+                      fontSize: 27,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Stack(
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: const Color(0xCAEBF2).withOpacity(1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        constraints: BoxConstraints.expand(
+                          height: 485.0,
+                          width: 900.0,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                                    flex: 1,
+                                    child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Organization Name',
+                                            style: GoogleFonts.kreon(
+                                              color: const Color(0x555555).withOpacity(1),
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 3),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Container(
+                                              constraints: BoxConstraints.expand(width: 400, height: 30),
+                                              child: TextFormField(
+                                                controller: organizationNameController,
+                                                style: GoogleFonts.kreon(
+                                                  color: const Color(0x555555).withOpacity(1),
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w300,
+                                                ),
+                                                decoration: InputDecoration(
+                                                  filled: true,
+                                                  fillColor: const Color(0xD9D9D9).withOpacity(1),
+                                                  contentPadding: EdgeInsets.only(left: 12, bottom: 20),
+                                                  border: OutlineInputBorder(
+                                                    borderRadius: BorderRadius.circular(25),
+                                                    borderSide: BorderSide(width: 4.0, color: const Color(0x555555).withOpacity(1),),
+                                                  ),
+                                                  focusedBorder: OutlineInputBorder(
+                                                    borderRadius: BorderRadius.circular(25),
+                                                    borderSide: BorderSide(color: Color(0xAAD1DA).withOpacity(1), width: 2),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 12),
+                                            Text(
+                                              'Event Name',
+                                              style: GoogleFonts.kreon(
+                                                color: const Color(0x555555).withOpacity(1),
+                                                fontSize: 17,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 3),
+                                          Expanded(
+                                            flex: 1,
+                                              child: Container(
+                                                constraints: BoxConstraints.expand(width: 400, height: 30),
+                                                child: TextFormField(
+                                                  controller: eventNameController,
+                                                  style: GoogleFonts.kreon(
+                                                    color: const Color(0x555555).withOpacity(1),
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w300,
+                                                  ),
+                                                  decoration: InputDecoration(
+                                                    filled: true,
+                                                    fillColor: const Color(0xD9D9D9).withOpacity(1),
+                                                    contentPadding: EdgeInsets.only(left: 12, bottom: 20),
+                                                    border: OutlineInputBorder(
+                                                      borderRadius: BorderRadius.circular(25),
+                                                      borderSide: BorderSide(width: 4.0, color: const Color(0x555555).withOpacity(1),),
+                                                    ),
+                                                    focusedBorder: OutlineInputBorder(
+                                                      borderRadius: BorderRadius.circular(25),
+                                                      borderSide: BorderSide(color: Color(0xAAD1DA).withOpacity(1), width: 2),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              Text(
+                                                'Date',
+                                                style: GoogleFonts.kreon(
+                                                  color: const Color(0x555555).withOpacity(1),
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 3),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Container(
+                                                  constraints: BoxConstraints.expand(width: 400, height: 30),
+                                                  child:
+                                                  TextFormField(
+                                                    controller: dateController,
+                                                    textAlignVertical: TextAlignVertical.center,
+                                                    style: GoogleFonts.kreon(
+                                                      color: const Color(0x555555).withOpacity(1),
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.w300,
+                                                    ),
+                                                    onTap: () async {
+                                                      DateTime date = DateTime(1900);
+                                                      FocusScope.of(context).requestFocus(new FocusNode());
+                                                      date = ( await showDatePicker(
+                                                        builder: (context, child) {
+                                                        return Theme(
+                                                          data: Theme.of(context).copyWith(
+                                                            colorScheme: ColorScheme.light(
+                                                              primary: Color(0xFF4549).withOpacity(1), // header background color
+                                                              onPrimary: Color(0x555555).withOpacity(1), // header text color
+                                                              onSurface: Color(0x555555).withOpacity(1), // body text color
+                                                            ),
+                                                            textButtonTheme: TextButtonThemeData(
+                                                              style: TextButton.styleFrom(
+                                                                foregroundColor: Color(0x555555).withOpacity(1), // button text color
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          child: child!,
+                                                        );
+                                                      },
+                                                        context: context,
+                                                        initialDate: DateTime.now(),
+                                                        firstDate: DateTime.now(),
+                                                        lastDate: DateTime(2100)
+                                                      ))!;
+                                                      dateController.text = date.toIso8601String().replaceRange(10, 23, '');
+                                                    },
+                                                    decoration: InputDecoration(
+                                                      filled: true,
+                                                      fillColor: const Color(0xD9D9D9).withOpacity(1),
+                                                      contentPadding: EdgeInsets.only(left: 12, bottom: 20),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(25),
+                                                        borderSide: BorderSide(width: 4.0, color: const Color(0x555555).withOpacity(1),),
+                                                      ),
+                                                      focusedBorder: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(25),
+                                                        borderSide: BorderSide(color: Color(0xAAD1DA).withOpacity(1), width: 2),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 12),
+                                              Text(
+                                                'Time',
+                                                style: GoogleFonts.kreon(
+                                                  color: const Color(0x555555).withOpacity(1),
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                                const SizedBox(height: 3),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Container(
+                                                  constraints: BoxConstraints.expand(width: 400, height: 30),
+                                                  child:
+                                                  TextFormField(
+                                                    controller: timeController,
+                                                    textAlignVertical: TextAlignVertical.center,
+                                                    style: GoogleFonts.kreon(
+                                                      color: const Color(0x555555).withOpacity(1),
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.w300,
+                                                    ),
+                                                    onTap: () async {
+                                                      DateTime time = DateTime(1900);
+                                                      FocusScope.of(context).requestFocus(new FocusNode());
+                                                      TimeOfDay initialTime = TimeOfDay.now();
+                                                      TimeOfDay? selectedTime = await showTimePicker(
+                                                        builder: (context, child) {
+                                                          return Theme(
+                                                            data: Theme.of(context).copyWith(
+                                                              colorScheme: ColorScheme.light(
+                                                                primary: Color(0xFF4549).withOpacity(1), // header background color
+                                                                onPrimary: Color(0x555555).withOpacity(1), // header text color
+                                                                onSurface: Color(0x555555).withOpacity(1), // body text color
+                                                              ),
+                                                              textButtonTheme: TextButtonThemeData(
+                                                                style: TextButton.styleFrom(
+                                                                  foregroundColor: Color(0x555555).withOpacity(1), // button text color
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            child: child!,
+                                                          );
+                                                        },
+                                                        context: context,
+                                                        initialTime: initialTime,
+                                                        initialEntryMode: TimePickerEntryMode.input,
+                                                      );
+                                                      if (selectedTime != null) {
+                                                        // Format the selected time with AM/PM
+                                                        String formattedTime = selectedTime.format(context);
+                                                        timeController.text = formattedTime;
+
+                                                         
+                                                        int hour = selectedTime.hourOfPeriod;
+                                                        int minute = selectedTime.minute;
+                                                        String amPm = selectedTime.period == DayPeriod.am ? 'AM' : 'PM';
+
+                                                       
+                                                        time = DateTime(1900, 1, 1, hour, minute);
+                                                        String minuteString = minute < 10 ? '0$minute' : '$minute';
+                                                        timeController.text = '${time.hour}:$minuteString $amPm';
+                                                      }
+                                                    },
+                                                    decoration: InputDecoration(
+                                                      filled: true,
+                                                      fillColor: const Color(0xD9D9D9).withOpacity(1),
+                                                      contentPadding: EdgeInsets.only(left: 12, bottom: 20),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(25),
+                                                        borderSide: BorderSide(width: 4.0, color: const Color(0x555555).withOpacity(1),),
+                                                      ),
+                                                      focusedBorder: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(25),
+                                                        borderSide: BorderSide(color: Color(0xAAD1DA).withOpacity(1), width: 2),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 12),
+                                                Text(
+                                                  'Location',
+                                                  style: GoogleFonts.kreon(
+                                                    color: const Color(0x555555).withOpacity(1),
+                                                    fontSize: 17,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 3),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Container(
+                                                  constraints: BoxConstraints.expand(width: 400, height: 30),
+                                                  child: TextFormField(
+                                                    controller: locationController,
+                                                    style: GoogleFonts.kreon(
+                                                      color: const Color(0x555555).withOpacity(1),
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.w300,
+                                                    ),
+                                                    decoration: InputDecoration(
+                                                      filled: true,
+                                                      fillColor: const Color(0xD9D9D9).withOpacity(1),
+                                                      contentPadding: EdgeInsets.only(left: 12, bottom: 20),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(25),
+                                                        borderSide: BorderSide(width: 4.0, color: const Color(0x555555).withOpacity(1),),
+                                                      ),
+                                                      focusedBorder: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(25),
+                                                        borderSide: BorderSide(color: Color(0xAAD1DA).withOpacity(1), width: 2),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              Text(
+                                                'Contact',
+                                                style: GoogleFonts.kreon(
+                                                  color: const Color(0x555555).withOpacity(1),
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 3),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Container(
+                                                  constraints: BoxConstraints.expand(width: 400, height: 30),
+                                                  child:
+                                                  TextFormField(
+                                                    controller: contactController,
+                                                    style: GoogleFonts.kreon(
+                                                      color: const Color(0x555555).withOpacity(1),
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.w300,
+                                                    ),
+                                                    decoration: InputDecoration(
+                                                      filled: true,
+                                                      fillColor: const Color(0xD9D9D9).withOpacity(1),
+                                                      contentPadding: EdgeInsets.only(left: 12, bottom: 20),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(25),
+                                                        borderSide: BorderSide(width: 4.0, color: const Color(0x555555).withOpacity(1),),
+                                                      ),
+                                                      focusedBorder: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(25),
+                                                        borderSide: BorderSide(color: Color(0xAAD1DA).withOpacity(1), width: 2),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 30),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(height: 12),
+                                              Text(
+                                                'Event Description',
+                                                style: GoogleFonts.kreon(
+                                                  color: const Color(0x555555).withOpacity(1),
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 3),
+                                              //SizedBox(width: 325, height: 300,
+                                              Expanded(
+                                                flex: 5,
+                                                child: Container(
+                                                  constraints: BoxConstraints.expand(width: 400, height: 500),
+                                                  child: TextFormField(
+                                                    controller: eventDescriptionController,
+                                                    maxLines: 12,
+                                                    style: GoogleFonts.kreon(
+                                                      color: const Color(0x555555).withOpacity(1),
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.w300,
+                                                    ),
+                                                    decoration: InputDecoration(
+                                                      filled: true,
+                                                      fillColor: const Color(0xD9D9D9).withOpacity(1),
+                                                      contentPadding: EdgeInsets.only(left: 12, bottom: 20),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(25),
+                                                        borderSide: BorderSide(width: 4.0, color: const Color(0x555555).withOpacity(1),),
+                                                      ),
+                                                      focusedBorder: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(25),
+                                                        borderSide: BorderSide(color: Color(0xAAD1DA).withOpacity(1), width: 2),
+                                                     ),
+                                                    ),
+                                                 ),
+                                                ),
+                                          ),
+                                          //const SizedBox(height: 70),
+                                          ],
+                            ),
+                          ),
+                        ],
+                      ),
+                  
+                  ),
+                  //const SizedBox(height: 70),
+                Positioned(
+                left: 0,
+                right: 0,
+                bottom: 7,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                      setState(() {
+                    _isRegistering = true;
+                  });
+
+                  if (_formKey.currentState!.validate()) {
+                    // Get the text from the controller
+                    //String dateTimeString = dateTimeController.text;
+
+                    // Split the text into date and time components
+                    //List<String> dateTimeParts = dateTimeString.split(' ');
+
+                    // Date will be the first part, and time will be the second part
+                    //String date = dateTimeParts[0]; // Assuming date comes first
+                    //String time = dateTimeParts[1]; // Assuming time comes second
+
+                    try {
+                     
+                      await registerEvent(
+                        context,
+                        organizationNameController.text,
+                        eventNameController.text,
+                        dateController.text,
+                        timeController.text,
+                        locationController.text,
+                        contactController.text,
+                        eventDescriptionController.text
+                      );
+
+                      
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Center(
+                            child: Container(
+                              padding: EdgeInsets.all(20),
+                              width: 600,
+                              height: 500,
+                              child: AlertDialog(
+                                backgroundColor: Color(0xFFFF3B3F).withOpacity(1),
+                                content: Padding(
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  child: Text(
+                                    'Event registered successfully!',
+                                    style: GoogleFonts.oswald(
+                                      fontSize: 30,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  Center(
+                                    child: TextButton(
+                                      style: ButtonStyle(
+                                        backgroundColor: MaterialStateProperty.all<Color>(
+                                          Colors.white,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => EventsNP(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        'Continue',
+                                        style: GoogleFonts.oswald(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color(0x555555).withOpacity(1),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } catch (error) {
+                      print('Event Registration Error: $error');
+                      setState(() {
+                        registerStatus = 'Error occurred while registering event';
+                      });
+                    } finally {
+                      
+                      setState(() {
+                        _isRegistering = false;
+                      });
+                      organizationNameController.clear();
+                      eventNameController.clear();
+                      dateController.clear();
+                      timeController.clear();
+                      locationController.clear();
+                      contactController.clear();
+                      eventDescriptionController.clear();
+                    }
+                  } else {
+                    print('Form is invalid');
+                    setState(() {
+                      _isRegistering = false;
+                    });
+                  }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFF3B3F).withOpacity(1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: SizedBox(
+                    height: 35,
+                    width: 150,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: Text(
+                        'Post Event',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.kreon(
+                          color: const Color(0x555555).withOpacity(1),
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("Event was cancelled"),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                              EventsNP())
+                            );
+                        },
+                        child: Text(
+                          'OK',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xAAD1DA).withOpacity(1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: SizedBox(
+                  height: 35,
+                  width: 150,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 5),
+                    child: Text(
+                      'Cancel',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.kreon(
+                        color: const Color(0x555555).withOpacity(1),
+                        fontSize: 17,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        ], ), 
+          ],
+      ),     
+    ),
+  ),
+), ),);
+
+  }
+}
