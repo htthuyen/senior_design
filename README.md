@@ -26,7 +26,7 @@
 ### Create event: The create event page is for nonprofits to create events to provide for their needs.
 ### Current Events Page: This page displays all the events currently in the system to donors/companies to be able to register for events. This will then lead them to the sign up page.
 ### Donation Of Interests: This page is completed by donors and companies when they sign up for an account. This page takes the selected donations that companies and donors are interested in, and then links them to nonprofits who have the needs of those interests vis the Connections page.
-### Donor Company Donation History: The Donor Company Donation History Page is to show the donation history (monetary and non-monetary) of donor/company
+### Donor Company Donation History: The Donor Company Donation History Page is the public donation history page provided to show the donation history (monetary and non-monetary) for each donor and company.
 ### Donor Payment Page : The Donor Payment Page is the form to let donor/company fill out the monetary donation
 ### Donor Profile: The profile page for Donors.
 ### Donor Profile Search: The donor profile search page shows up when a user clicks "view profile" on a donor profile in the search page. 
@@ -43,7 +43,7 @@
 ### Login: The login page is for users who have an account with GiveHub and can input their email address and password to login. 
 ### My apps: The my apps page is for nonprofits to view their submitted grant applications and edit or withdraw them.
 ### My events : This page allows donors/companies to see all of the events they have registered for. Also, they are able to un-register from an event and turn off notifications for an event as well.
-### My grants: The my grants page is for donors and companies to view their created grants and edit or delete them. 
+### My grants: The my grants page is for donors and companies to view their all their open and created grant applications and gives them the option to edit or delete them. 
 ### Needs: The needs page is similiar to the Donations of Interests page for Companies and Donors, but the Needs page saves the needs specified by our Non Profits and then pairs them with Companies and Donors thorugh the connections page. 
 ### Non Monetary donation: The Non Monetary Donation is for donors to submit a form for non monetary donations.
 ### Notifications page: The notifications page provides real time updates to users when someone has applied for grants, accepted grants, made payments, subscribed to profiles, or signed up for events.
@@ -53,7 +53,7 @@
 ### Np selection page: The NP selection page is for donors/companies. It includes a list of their grants and its applicants. When clicking on an applicant, they can view their application and decided to "accept" or "reject" their application.
 ### Public Donation History : This page provides a donation history for other users to be able to look at. It contains less information, allowing other users to see what kind of activity and interests the user has through their history. For donors/companies, it shows the donations they made, while non-profits, it shows the donations they have received.
 ### Search: The search page allows all users to search through, view, and subscribe to any company, donor, and non profit profiles.
-### Signup: The sign-up page is used to create an account which includes authentication.
+### Signup: The sign-up page is used to create an account which includes authentication using our third party authentication system: Firebase Authentication.
 ### Subscription: The Subscription page displays the profiles that the user liked for quick access. 
 ### Welcome page: Our site's welcome page that provides easy button navigations to our Contact Us, Our Featured Non Profits, and Apply Now pages. 
 
