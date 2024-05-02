@@ -203,7 +203,7 @@ class _MyGrantsState extends State<MyGrants> {
           children: [
             Text(
               'You have no grants.',
-             style: GoogleFonts.oswald(fontSize: 40, color: Colors.white)
+             style: GoogleFonts.oswald(fontSize: 40, color: const Color(0x555555).withOpacity(1)),
             ),
             ElevatedButton(
               onPressed: () {

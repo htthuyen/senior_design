@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../authentication/auth.dart';
 import '../../webcomponents/input_theme.dart';
 import '../../webcomponents/validation.dart';
+import '../company_donor/mygrants.dart';
 
 
 class GrantCreationPage extends StatefulWidget {
@@ -410,7 +411,9 @@ void createNotification({
 
                                                       }
                                                     );
-
+                                                    Navigator.push(context, new MaterialPageRoute(
+                                                      builder: (context) =>
+                                                      MyGrants()));
                                                   },
                                                   child: Text(
                                                     'Yes',
@@ -422,7 +425,9 @@ void createNotification({
                                                 ),
                                                 TextButton(
                                                   onPressed: () {
-                                                    Navigator.of(context).pop();
+                                                    Navigator.push(context, new MaterialPageRoute(
+                                                    builder: (context) =>
+                                                    MyGrants()));
                                                   },
                                                   child: Text(
                                                     'Cancel',
@@ -462,7 +467,11 @@ void createNotification({
                               height: 50,
                               width: 150,
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(context, new MaterialPageRoute(
+                                    builder: (context) =>
+                                    MyGrants()));
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFFA9D1D9).withOpacity(1),
                                   shape: RoundedRectangleBorder(
