@@ -3,6 +3,8 @@ import 'package:givehub/webpages/np/grantstatus.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../authentication/auth.dart';
+import '../webcomponents/donor_company_topbar.dart';
+import '../webcomponents/usertopbar.dart';
 import 'company_donor/companyprofilepage.dart';
 import 'company_donor/donorcompanydonationhistory.dart';
 import 'company_donor/donorprofile.dart';

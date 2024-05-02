@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import '../authentication/auth.dart';
+import '../webcomponents/np_topbar.dart';
+import '../webcomponents/usertopbar.dart';
 import 'company_donor/companyprofilepage.dart';
 import 'company_donor/donorcompanydonationhistory.dart';
 import 'company_donor/donorprofile.dart';
@@ -129,7 +131,7 @@ class _AllEventsPageState extends State<AllEventsPage> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         key: _scaffoldKey,
-        appBar:  appBar: UserTopBar(),
+        appBar:  UserTopBar(),
       endDrawer: NpTopBar(),
         body: CustomScrollView(
           slivers: [
