@@ -191,23 +191,34 @@ Future<String?> getUserNameFromDatabase(String userId) async {
       return null;   
   }
 }
-Future<String?> getUserUIDFromDatabase(String userId) async {
-  final ref = FirebaseDatabase.instance.ref();
-  final snap = await ref.child('users').get();
-  final data = snap.value as Map<dynamic, dynamic>?;
-    if (data != null && data.containsKey('name')) {
-      // Extract userName from the user data
-      String? userName = data['name'];
-      print(userId);
-      print(uid);
-      // Return the userName
-      return userName;
-    } else {
-      // User data not found or missing name
-      return null;   
+
+Future<String?> getUserID(String name) async {
+  try {
+    final ref = FirebaseDatabase.instance.reference();
+    final snapshot = await ref.child('users').once();
+
+    final data = snapshot.snapshot.value as Map<dynamic, dynamic>?;
+
+    if (data != null) {
+      
+      for (var key in data.keys) {
+        var eventData = data[key] as Map<dynamic, dynamic>;
+        if (eventData['name'] == name) {
+          print('Found matching event ID: $key');
+          return key; 
+        }
+      }
+    }
+
+  
+    print('No matching event found');
+    return null;
+  } catch (e) {
+    // Handle errors
+    print('Error getting event ID: $e');
+    return null;
   }
 }
-
 Future<void> registerEvent(BuildContext context, String organizationName, String eventName, String date, String time, String location, String contact, String eventDescription) async {
   try {
     // Initialize Firebase if not already initialized
