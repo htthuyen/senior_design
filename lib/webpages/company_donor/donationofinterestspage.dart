@@ -37,6 +37,11 @@ class _DonationOfInterestsPageState extends State<DonationOfInterestsPage> {
     super.initState();
     _loadSelectedInterests();
   }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadSelectedInterests();
+  }
 
   Future<void> _loadSelectedInterests() async {
     _prefs = await SharedPreferences.getInstance();
