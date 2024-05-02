@@ -173,7 +173,7 @@ class DonorComTopBar extends StatelessWidget implements PreferredSizeWidget {
                       onTap: () {
                         Navigator.push(context, new MaterialPageRoute(
                           builder: (context) =>
-                          EventSignUpPage())
+                          CurrentEventsPage())
                         );
                       },
                     ),
@@ -276,10 +276,10 @@ class DonorComTopBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ),
                   onTap: () {
-                    /* Navigator.push(context, new MaterialPageRoute(
+                    Navigator.push(context, new MaterialPageRoute(
                           builder: (context) =>
-                          new SubscriptionsPage())
-                     );*/
+                          SubscriptionsPage())
+                     );
                   },
                 ),
                 ListTile(
