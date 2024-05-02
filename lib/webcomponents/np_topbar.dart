@@ -11,11 +11,14 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../authentication/auth.dart';
 import '../webpages/company_donor/donorcompanydonationhistory.dart';
+import '../webpages/notificationspage.dart';
 import '../webpages/np/createevent.dart';
 import '../webpages/np/eventnp.dart';
 import '../webpages/np/grantapp.dart';
 import '../webpages/np/needs.dart';
+import '../webpages/np/npdonationhistory.dart';
 import '../webpages/np/npdonationreview.dart';
+import '../webpages/subscription.dart';
 
 class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
   @override
@@ -260,7 +263,7 @@ class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
                     onTap: () {
                       Navigator.push(context, new MaterialPageRoute(
                             builder: (context) =>
-                            SubscriptionsPage()));
+                            SubscriptionPage()));
                     },
                   ),
                   ListTile(
