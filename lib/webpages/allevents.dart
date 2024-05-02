@@ -130,7 +130,7 @@ class _AllEventsPageState extends State<AllEventsPage> {
       home: Scaffold(
         key: _scaffoldKey,
         appBar:  appBar: UserTopBar(),
-      endDrawer: 
+      endDrawer: NpTopBar(),
         body: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
