@@ -453,7 +453,30 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
                 ),
                 TextButton(
                   onPressed: () {
-                    
+                    if (
+                        nameController.text.isEmpty || emailController.text.isEmpty ||
+                        phoneController.text.isEmpty ||
+                        memberSinceController.text.isEmpty ||
+                        companyInfoController.text.isEmpty) {
+                      // Show dialog if any field is empty
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: const Color(0xFFFF3B3F).withOpacity(1),
+                            title: Text('Please Fill in All Fields', style: GoogleFonts.oswald(fontSize: 30, color: Colors.white)),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
                     _updateProfile(
                       newName: nameController.text,
                       newEmail: 'new@example.com',
@@ -465,6 +488,7 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
                     );
 
                     Navigator.of(context).pop();
+                    }
                   },
                   child: Text(
                     'Save',
