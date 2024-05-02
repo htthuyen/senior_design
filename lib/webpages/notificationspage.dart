@@ -184,43 +184,8 @@ Future<void> removeNotificationFromDatabase(String userId) async {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: GestureDetector(
-          onTap: () {
-            
-            print('GiveHub Button Pressed!');
-          },
-          child: Row(
-            children: [
-              Text(
-                'GiveHub',
-                style: GoogleFonts.oswald(
-                  color: Colors.white,
-                  fontSize: 30,
-                ),
-              ),
-            ],
-          ),
-        ),
-        centerTitle: false, 
-        backgroundColor: const Color(0xFFFF3B3F), 
-        actions: [
-          IconButton(
-            onPressed: () {
-              
-              print('Search Icon Pressed!');
-            },
-            icon: Icon(Icons.search, color: Colors.white),
-          ),
-          IconButton(
-            onPressed: () {
-             
-              _scaffoldKey.currentState!.openEndDrawer();
-            },
-            icon: Icon(Icons.menu, color: Colors.white),
-          ),
-        ],
-      ),
+      appBar: UserTopBar(),
+      endDrawer: ,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
