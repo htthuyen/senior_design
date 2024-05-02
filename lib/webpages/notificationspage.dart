@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:givehub/webcomponents/donor_company_topbar.dart';
+import 'package:givehub/webcomponents/np_topbar.dart';
+import 'package:givehub/webcomponents/usertopbar.dart';
 import 'package:givehub/webpages/np/grantstatus.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -55,15 +58,17 @@ class _NotificationsPageState extends State<NotificationsPage> {
   String userId = '';
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String? userType;
 
  @override
   void initState() {
     super.initState();
     
-    getUser().then((_) {
+    getUser().then((_) async {
       if (uid != null) {
         //sendNotificationsToSubscribers(uid!, message);
         getNotificationsFromDatabase(uid!); 
+        userType = await getUserTypeFromDatabase(uid!);
       } else {
         showSnackBar(context, 'User ID not found. Please log in again.');
         Navigator.pushReplacementNamed(context, '/login'); 
@@ -185,7 +190,7 @@ Future<void> removeNotificationFromDatabase(String userId) async {
     return Scaffold(
       key: _scaffoldKey,
       appBar: UserTopBar(),
-      endDrawer: ,
+      endDrawer: (userType?.toLowerCase() == 'nonprofit organization') ? NpTopBar() : DonorComTopBar(),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -269,290 +274,7 @@ Future<void> removeNotificationFromDatabase(String userId) async {
           ),
         ),
       ),
-      endDrawer: Drawer(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.5, 
-          child: Container(
-            color: const Color(0xFFFF3B3F), 
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF3B3F),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Menu',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 24,
-                          ),
-                        ),
-                        Divider(
-                          color: Color(0xFFF3B3F),
-                          thickness: .5,
-                        ),
-                      ],
-                    ),
-                  ),
-                  ExpansionTile(
-                    title: Text(
-                      'Account Information',
-                      style: GoogleFonts.oswald(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                     collapsedIconColor: Colors.white,
-                    trailing: Icon(Icons.expand_more, color: Colors.white), 
-                    children: [
-                      ListTile(
-                        title: Text(
-                          'Edit Profile',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        onTap: () {
-                          String? userType = getUserTypeFromDatabase(uid!) as String?;
-                            if (userType == 'Nonprofit Organization') {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NPProfilePage()));
-                            } else if (userType == 'Individual Donor') {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DonorProfilePage()));
-                            } else if (userType == 'Company') {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CompanyProfilePage()));
-                            }
-                        },
-                      ),
-                      ListTile(
-                        title: Text(
-                          'Update Needs',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        onTap: () {
-                         Navigator.push(context, new MaterialPageRoute(
-                            builder: (context) =>
-                              NeedsPage())
-                            );
-                        },
-                      ),
-                    ],
-                  ),
-                  ExpansionTile(
-                    title: Text(
-                      'Donation Center',
-                      style: GoogleFonts.oswald(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                     collapsedIconColor: Colors.white,
-                    trailing: Icon(Icons.expand_more, color: Colors.white), 
-                    children: [
-                      ListTile(
-                        title: Text(
-                          'Donation Requests',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        onTap: () {
-                           Navigator.push(context, new MaterialPageRoute(
-                                                builder: (context) =>
-                                                  NPDonationReview()
-                           ), ); 
-                        },
-                      ),
-                      ListTile(
-                        title: Text(
-                          'Donation History',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.push(context, new MaterialPageRoute(
-                            builder: (context) =>
-                            DonationHistoryDonorCompany())
-                          );
-                        },
-                      ),
-                    ],
-                  ), 
-                  ExpansionTile(
-                    title: Text(
-                      'Event Center',
-                      style: GoogleFonts.oswald(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                     collapsedIconColor: Colors.white,
-                    trailing: Icon(Icons.expand_more, color: Colors.white), 
-                    children: [
-                      ListTile(
-                        title: Text(
-                          'Create Event',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.push(context, new MaterialPageRoute(
-                                                builder: (context) =>
-                                                  CreateEvent())
-                                                );
-                        },
-                      ),
-                      ListTile(
-                        title: Text(
-                          'Your Events',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        onTap: () {
-                         Navigator.push(context, new MaterialPageRoute(
-                                                builder: (context) =>
-                                                  EventsNP())
-                                                );
-                        },
-                      ),
-                      ListTile(
-                        title: Text(
-                          'Edit Event',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        onTap: () {
-                         Navigator.push(context, new MaterialPageRoute(
-                                                builder: (context) =>
-                                                 EventsNP())
-                                                );
-                        },
-                      ),
-                    ],
-                  ),
-                  ExpansionTile(
-                    title: Text(
-                      'Grant Center',
-                      style: GoogleFonts.oswald(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                    collapsedIconColor: Colors.white,
-                    trailing: Icon(Icons.expand_more, color: Colors.white), 
-                    children: [
-                      ListTile(
-                        title: Text(
-                          'Apply for a Grant',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        onTap: () {
-                           Navigator.push(context, new MaterialPageRoute(
-                            builder: (context) =>
-                            GrantApp())
-                          );
-                        },
-                      ),
-                      ListTile(
-                        title: Text(
-                          'Application Status',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.push(context, new MaterialPageRoute(
-                            builder: (context) =>
-                            GrantStatusPage())
-                          );
-                        },
-                      ),
-                      ListTile(
-                        title: Text(
-                          'Your Applications',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.push(context, new MaterialPageRoute(
-                            builder: (context) =>
-                            MyApps())
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Notifications',
-                      style: GoogleFonts.oswald(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                    onTap: () {
-                    Navigator.push(context, new MaterialPageRoute(
-                            builder: (context) =>
-                            NotificationsPage())
-                          );
-                    },
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Subscriptions',
-                      style: GoogleFonts.oswald(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.push(context, new MaterialPageRoute(
-                            builder: (context) =>
-                            SubscriptionPage())
-                          );
-                    },
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Logout',
-                      style: GoogleFonts.oswald(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                    onTap: () {
-                      _showLogoutDialog(context);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+      
     );
   }
 }
