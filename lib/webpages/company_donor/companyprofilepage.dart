@@ -60,9 +60,9 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
       setState((){
         name = '$userName';
         email = '$userEmail';
-        member = 'Member Since: ' + '$userMembership';
+        member = '$userMembership';
         phone = '$userPhone';
-        companyInfo = 'Company Info';
+        companyInfo = '';
 
       });
     });
@@ -155,12 +155,12 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
                         ),
                         SizedBox(height: 30),
                         Text(
-                          member,
+                          'Member Since: ' + member,
                           style: GoogleFonts.oswald(fontSize: 28),
                         ),
                         SizedBox(height: 30), 
                         Text(
-                          companyInfo,
+                          'Company Info: ' + companyInfo,
                           style: GoogleFonts.oswald(fontSize: 28),
                         ),
                       ],
