@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../authentication/auth.dart';
 import '../webcomponents/profilepicture.dart';
+import 'package:givehub/webcomponents/donor_company_topbar.dart';
+import 'package:givehub/webcomponents/usertopbar.dart';
 import 'company_donor/companyprofilepage.dart';
 import 'company_donor/donationofinterestspage.dart';
 import 'company_donor/donorcompanydonationhistory.dart';
@@ -40,7 +42,7 @@ class User {
   Map<String, dynamic> toJson() {
     return {
       'userId': userId,
-      'userName': name,
+      'userName': userName,
       'email': email,
       //'aboutUs': aboutUs,
       'userType': userType,

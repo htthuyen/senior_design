@@ -455,9 +455,9 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
                   onPressed: () {
                     if (
                         nameController.text.isEmpty || emailController.text.isEmpty ||
-                        phoneController.text.isEmpty ||
+                        aboutUsController.text.isEmpty ||
                         memberSinceController.text.isEmpty ||
-                        companyInfoController.text.isEmpty) {
+                        websiteController.text.isEmpty) {
                       // Show dialog if any field is empty
                       showDialog(
                         context: context,

@@ -448,7 +448,8 @@ class DonorComTopBar extends StatelessWidget implements PreferredSizeWidget {
                   child: Text('Cancel', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
                 ),
                 TextButton(
-                  if (
+                  onPressed: () {
+                    if (
                         nameController.text.isEmpty || emailController.text.isEmpty ||
                         phoneController.text.isEmpty ||
                         memberSinceController.text.isEmpty ||
@@ -472,7 +473,6 @@ class DonorComTopBar extends StatelessWidget implements PreferredSizeWidget {
                         },
                       );
                     } else {
-                  onPressed: () {
                     _updateProfile(
                       newName: nameController.text,
                       newEmail: emailController.text,
@@ -480,9 +480,8 @@ class DonorComTopBar extends StatelessWidget implements PreferredSizeWidget {
                       newMember: memberSinceController.text,
                       newCompanyInfo: companyInfoController.text,
                     );
-
+                    }
                     Navigator.of(context).pop();
-                  }
                   },
                   child: Text('Save', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
                 ),
