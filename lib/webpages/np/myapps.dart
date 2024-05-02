@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:givehub/webcomponents/np_topbar.dart';
-import 'package:givehub/webcomponents/usertopbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../authentication/auth.dart';
+import 'package:givehub/webcomponents/np_topbar.dart';
+import 'package:givehub/webcomponents/usertopbar.dart';
 import '../company_donor/companyprofilepage.dart';
 import '../company_donor/donationofinterestspage.dart';
 import '../company_donor/donorcompanydonationhistory.dart';
@@ -15,7 +15,6 @@ import '../company_donor/eventhistory.dart';
 import '../company_donor/eventsignuppage.dart';
 import '../company_donor/grantcreationpage.dart';
 import '../company_donor/myeventspage.dart';
-import '../company_donor/mygrants.dart';
 import '../company_donor/nonmondon.dart';
 import '../notificationspage.dart';
 import 'grantapp.dart';
@@ -25,19 +24,20 @@ class Application {
   String contactEmail;
   String contactName;
   String contactPhone;
-  String nonProfitName;
-  String Response;
+  String nonprofitName;
+  String response;
   String website;
+  String grantKey;
 
-  Application({required this.contactEmail, required this.contactName, required this.contactPhone, required this.nonProfitName, required this.Response, required this.website});
+  Application({required this.grantKey, required this.contactEmail, required this.contactName, required this.contactPhone, required this.nonprofitName, required this.response, required this.website});
 
   Map<String, dynamic> toJson() {
     return {
       'contactEmail': contactEmail,
       'contactName': contactName,
       'contactPhone': contactPhone,
-      'nonprofitName': nonProfitName,
-      'response': Response,
+      'nonprofitName': nonprofitName,
+      'response': response,
       'website': website,
       //.toIso8601String(),
     };
@@ -51,7 +51,10 @@ class MyApps extends StatefulWidget {
 
 class _MyAppsState extends State<MyApps> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<Application> apps = [];
+  List<List<Application>> apps = [];
+  List<Grant> grants = [];
+   List<List<Application>> newApps = [];
+  List<Grant> newGrants = [];
   bool isFavorite = false;
   final _formKey = GlobalKey<FormState>();
 
@@ -61,7 +64,23 @@ class _MyAppsState extends State<MyApps> {
     
     getUser().then((_) {
       if (uid != null) {
-        getAppsFromDatabase(uid!); 
+        getGrantsFromDatabase().then((_) {
+          for (int i = 0; i < grants.length; i++) {
+            Grant g = grants[i];
+            getAppsFromDatabase(uid!, g.grantKey, i).then((_) {
+              for (int j = 0; j < grants.length; j++) {
+                if (apps[j].isNotEmpty) {
+                  if (newApps.contains(apps[j]) || newGrants.contains(grants[j])) {
+                    continue;
+                  }
+                  newApps.add(apps[j]);
+                  newGrants.add(grants[j]);
+                }
+              }
+            }
+          );
+          }
+        });
       } else {
         
         showSnackBar(context, 'User ID not found. Please log in again.');
@@ -69,23 +88,100 @@ class _MyAppsState extends State<MyApps> {
       }
     });
   }
-  Future<void> getAppsFromDatabase(String userId) async {
-    try {
-      List<Map<dynamic, dynamic>>? userApps = await fetchAppsFromDatabase(userId);
 
-      if (userApps != null) {
+   Future<void> getGrantsFromDatabase() async {
+    try {
+      List<Map<dynamic, dynamic>>? dbGrants = await fetchGrantsFromDatabase();
+
+      if (dbGrants != null) {
         setState(() {
-          apps = userApps.map((appData) => Application (
-            
-            contactEmail: appData['contactEmail'],
-            contactName : appData['contactName'],
-            contactPhone : appData['contactPhone'],
-            nonProfitName : appData['nonPpofitName'],
-            Response :  appData['response'],
-            website : appData['website'],
+          grants = dbGrants.map((grantData) => Grant(
+            grantKey: grantData['grantKey'],
+            donorName: grantData['donorName'],
+            email: grantData['donorEmail'],
+            phone: grantData['donorPhone'],
+            eligibility: grantData['eligibility'],
+            furtherRequirements: grantData['furtherRequirements'],
+            grantAmount: grantData['grantAmount'],
+            grantDeadline: grantData['grantDeadline'],
+            grantName: grantData['grantName'],
+            paymentDetails: grantData['paymentDetails'],
           )).toList();
         });
       } else {
+        print('No grants found.');
+      }
+    } catch (e) {
+      print('Error fetching grants: $e');
+      showSnackBar(context, 'Error fetching grants. Please try again later.');
+    }
+  }
+  Future<List<Map<String, dynamic>>?> fetchGrantsFromDatabase() async {
+    final ref = FirebaseDatabase.instance.reference();
+
+    try {
+      var snapshot = await ref.child('grants').once();
+
+      if (snapshot.snapshot.value != null) {
+        Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map<dynamic, dynamic>;
+
+        if (data != null) {
+          List<Map<String, dynamic>> grantsList = [];
+          data.forEach((key, data) {
+            if (data != null) {
+              String grantKey = key ?? ' ';  
+              String grantName = data['grantName'] ?? '';
+              String donorName = data['donorName'] ?? '';
+              String donorEmail = data['donorEmail'] ?? '';
+              String donorPhone = data['donorPhone'] ?? '';
+              int grantAmount = int.tryParse(data['grantAmount'] ?? '') ?? 0;
+              String furtherRequirements = data['furtherRequirements'] ?? '';
+              String eligibility = data['eligibility'] ?? '';
+              String paymentDetails = data['paymentDetails'] ?? '';
+              String grantDeadline = data['grantDeadline'] ?? '';
+
+              Map<String, dynamic> grantData = {
+                'grantKey': grantKey,
+                'grantName': grantName,
+                'donorName': donorName,
+                'donorEmail': donorEmail,
+                'donorPhone': donorPhone,
+                'grantAmount': grantAmount,
+                'furtherRequirements': furtherRequirements,
+                'eligibility': eligibility,
+                'paymentDetails': paymentDetails,
+                'grantDeadline': grantDeadline,
+              };
+              grantsList.add(grantData);
+            }
+          });
+          return grantsList;
+        }
+      }
+    } catch (e) {
+      print('Error retrieving grants: $e');
+    }
+    return null;
+  }
+
+  Future<void> getAppsFromDatabase(String userId, String g, int i) async {
+    try {
+      List<Map<dynamic, dynamic>>? userApps = await fetchAppsFromDatabase(userId, g);
+      print("UserApps: " + userApps.toString());
+      if (userApps != null) {
+        setState(() {
+          apps.add(userApps.map((appData) => Application (
+            grantKey : appData['grantKey'],
+            contactEmail: appData['contactEmail'],
+            contactName : appData['contactName'],
+            contactPhone : appData['contactPhone'],
+            nonprofitName : appData['nonprofitName'],
+            response :  appData['response'],
+            website : appData['website'],
+          )).toList());
+        });
+      } else {
+        apps.add([]);
         print('No apps found for the user.');
       }
     } catch (e) {
@@ -93,12 +189,11 @@ class _MyAppsState extends State<MyApps> {
       showSnackBar(context, 'Error fetching user apps. Please try again later.');
     }
   }
-  Future<List<Map<String, dynamic>>?> fetchAppsFromDatabase(String userId) async {
-    final ref = FirebaseDatabase.instance.ref();
+  Future<List<Map<String, dynamic>>?> fetchAppsFromDatabase(String userId, String grantId) async {
+    final ref = FirebaseDatabase.instance.reference();
 
     try {
-      String? grantId = await getGrantNPId(userId);
-      var snapshot = await ref.child('grants').child(grantId!).child('applicants').orderByChild(userId).equalTo(uid).once();
+      var snapshot = await ref.child('grants/$grantId/applicants').once();
 
       if (snapshot.snapshot.value != null) {
         Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map<dynamic, dynamic>;
@@ -106,34 +201,29 @@ class _MyAppsState extends State<MyApps> {
         if (data != null) {
           List<Map<String, dynamic>> appsList = [];
           data.forEach((key, data) {
-            if (data != null) {
-              
+            if (data != null) { 
               String contactEmail = data['contactEmail'] ?? '';
-              
               String contactName = data['contactName'] ?? '';
-  
               String contactPhone = data['contactPhone'] ?? '';
-
-              String nonProfitName = data['nonprofitName'] ?? '';
-
-              String Response = data['response'] ?? '';
-
+              String nonprofitName = data['nonprofitName'] ?? '';
+              String response = data['response'] ?? '';
               String website = data['website'] ?? '';
 
-
               Map<String, dynamic> appData = {
+                'grantKey': grantId,
                 'contactEmail': contactEmail,
-            'contactName': contactName ,
-             'contactPhone': contactPhone,
-             'nonProfitName': nonProfitName,
-            'Response': Response,
-             'website': website,
+                'contactName': contactName ,
+                'contactPhone': contactPhone,
+                'nonprofitName': nonprofitName,
+                'response': response,
+                'website': website,
               };
-
-            
-              appsList.add(appData);
+              if (key == userId) {
+                appsList.add(appData);
+              }
             }
           });
+          print("Appslist: " + appsList.toString());
           return appsList;
         }
       }
@@ -197,7 +287,7 @@ class _MyAppsState extends State<MyApps> {
                               alignment: Alignment.topLeft,
                               padding: EdgeInsets.only(left: 50, bottom: 30, top: 40),
                               child: Text(
-                                'MY GRANTS',
+                                'My Applications',
                                 style: GoogleFonts.oswald(
                                   color: const Color(0x555555).withOpacity(1),
                                   fontSize: 32,
@@ -214,10 +304,9 @@ class _MyAppsState extends State<MyApps> {
                         child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          //const SizedBox(width: 50),
                           Flexible(
                             child: GridView.builder(
-                              itemCount: apps.length,
+                              itemCount: newApps.length,
                               shrinkWrap: true,
                               scrollDirection: Axis.vertical,
                               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -227,42 +316,7 @@ class _MyAppsState extends State<MyApps> {
                                 mainAxisExtent: 400
                               ),
                               itemBuilder: (context, index) {
-                                final String contactName = apps[index].contactName;
-                                return FutureBuilder<List<dynamic>>(
-                                  future: Future.wait([ getGrantNPId(uid!)]),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      
-                                      return CircularProgressIndicator();
-                                    } else {
-                                      
-                                      if (snapshot.hasError || snapshot.data == null) {
-                                       
-                                        return Text('Error: ${snapshot.error}');
-                                      } else {
-                                        // Extract eventId and userId from the snapshot data
-                                        String grantId = snapshot.data![0] as String;
-                                        //String attendeeId = getAttendeeId(events[index].orgName, events[index].eventName, uid!) as String;
-                                        //String userId = snapshot.data![1] as String;
-                                        print(grantId);
-                                        //print(userId);
-                                        //String formattedDeadline = DateFormat('yyyy-MM-dd').format(grants[index].deadline);
-                                        return makeBox(
-                                          contactEmail: apps[index].contactEmail,
-                                          contactName : apps[index].contactName,
-                                          contactPhone : apps[index].contactPhone,
-                                          nonProfitName : apps[index].nonProfitName,
-                                          Response :  apps[index].Response,
-                                          website : apps[index].website,
-                                          //description: grants[index].description,
-                                          //eventId: eventId,
-                                          //attendeeId: attendeeId,
-                                          //userId: userId,
-                                        );
-                                      }
-                                    }
-                                  },
-                                );
+                                return makeBox( grant: newGrants[index], apps: newApps[index][0],);
                               },
                             ),
                           ),
@@ -279,28 +333,18 @@ class _MyAppsState extends State<MyApps> {
   }
 
 class makeBox extends StatelessWidget {
-  String contactEmail;
-  
-  String contactName;
+  Grant grant;
+  Application apps;
 
-  String contactPhone;
+  makeBox({required this.grant, required this.apps});
 
-  String nonProfitName;
-
-  String Response;
-
-  String website;
-
-  
-  makeBox({required this.contactEmail, required this.contactName, required this.contactPhone, required this.nonProfitName, required this.Response, required this.website});
-  
   void _showEditGrantDialog(BuildContext context, String eventId) {
-    TextEditingController contactEmailController = TextEditingController();
-    TextEditingController contactNameController = TextEditingController();
-    TextEditingController contactPhoneController = TextEditingController();
-    TextEditingController nonProfitNameController = TextEditingController();
-    TextEditingController responseController = TextEditingController();
-    TextEditingController websiteController = TextEditingController();
+    TextEditingController contactEmailController = TextEditingController(text: apps.contactEmail);
+    TextEditingController contactNameController = TextEditingController(text: apps.contactName);
+    TextEditingController contactPhoneController = TextEditingController(text: apps.contactPhone);
+    TextEditingController nonProfitNameController = TextEditingController(text: apps.nonprofitName);
+    TextEditingController responseController = TextEditingController(text: apps.response);
+    TextEditingController websiteController = TextEditingController(text: apps.website);
     
     showDialog(
       context: context,
@@ -390,6 +434,98 @@ class makeBox extends StatelessWidget {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        backgroundColor: Color(0xCAEBF2).withOpacity(1),
+                        title: Center(
+                          child: Text(
+                          "Are you sure you would like to withdraw this application?",
+                          style: GoogleFonts.kreon(
+                              color: const Color(0x555555).withOpacity(1),
+                              fontSize: 25,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                              child: Text(
+                                'Yes',
+                                style: GoogleFonts.kreon(
+                                  color: Colors.green,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              onPressed:() {
+                                  final ref = FirebaseDatabase.instance.ref();
+                                  ref.child('grants/${grant.grantKey}/applicants/$uid').remove().then((_) {
+                                    showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      backgroundColor: Color(0xCAEBF2).withOpacity(1),
+                                      title: Center(child: Text(
+                                        "Your application has been withdrawn",
+                                        style: GoogleFonts.kreon(
+                                            color: Colors.green.shade400,
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                  })
+                                  .catchError((error) {
+                                    showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      backgroundColor: Color(0xCAEBF2).withOpacity(1),
+                                      title: Center(child: Text(
+                                        "Failed to withdraw application. Please try again",
+                                        style: GoogleFonts.kreon(
+                                            color: Colors.green.shade400,
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    );
+                                  });
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyApps()));
+                              },
+                          ),
+                          TextButton(
+                              child: Text(
+                                'No',
+                                style: GoogleFonts.kreon(
+                                  color: Colors.red,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              onPressed:() {
+                                Navigator.pop(context);
+                              }
+                          ),
+                        ]
+                      ),
+                    ); 
+                  },
+                  child: Text(
+                    'Withdraw',
+                    style: GoogleFonts.oswald(
+                      color: Color(0xFF3B3F).withOpacity(1),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
                     Navigator.of(context).pop();
                   },
                   child: Text(
@@ -430,24 +566,17 @@ class makeBox extends StatelessWidget {
                         },
                       );
                     } else {
-                      // Split the date and time from the combined input
-                      
-                      // Update event information in the database
+                      // Update application information in the database
                       _updateApplication(
-                        //grantId: grantId,
+                        grantKey: apps.grantKey,
                         newContactEmail: contactEmailController.text,
                         newContactName: contactNameController.text,
                         newContactPhone: contactPhoneController.text,
                         newNonProfitName: nonProfitNameController.text,
                         newResponse: responseController.text,
                         newWebsite: websiteController.text,
-                        
                       );
-
-                      Navigator.push(context, new MaterialPageRoute(
-                                                builder: (context) =>
-                                                  MyGrants())
-                                                );
+                      Navigator.push(context, new MaterialPageRoute(builder: (context) => MyApps()));
                     }
                   },
                   child: Text(
@@ -466,49 +595,56 @@ class makeBox extends StatelessWidget {
       },
     );
   }
-  void _updateApplication({
+  Future<void> _updateApplication({
+    required String grantKey,
       required String newContactEmail,
       required String newContactName,
       required String newContactPhone,
       required String newNonProfitName,
       required String newResponse,
       required String newWebsite,
-    }) {
+    }) async {
     try {
       // Get a reference to the event node in the database
-      String? grantId = getGrantNPId(uid!) as String?;
-      DatabaseReference grantRef = FirebaseDatabase.instance.reference().child('grants').child(grantId!).child('applications').child(uid!);
+      DatabaseReference grantRef = FirebaseDatabase.instance.ref().child('grants/${grant.grantKey}/applicants/$uid');
 
       // Fetch existing event data from the database
-      grantRef.once().then((DataSnapshot snapshot) {
-        if (snapshot.value != null) {
-          Map<String, dynamic> grantData = snapshot.value as Map<String, dynamic>;
+      //grantRef.once().then((DataSnapshot snapshot) {
+        //if (snapshot.value != null) {
+          Map<String, dynamic> grantData = {
+          'contactEmail': newContactEmail,
+          'contactName': newContactName,
+          'contactPhone': newContactPhone,
+          'nonprofitName': newNonProfitName,
+          'response': newResponse,
+          'website': newWebsite,
+        };
 
           // Update only the fields that are provided by the user
-          if (newContactEmail.isNotEmpty) grantData['contactEmail'] = newContactEmail;
+         /* if (newContactEmail.isNotEmpty) grantData['contactEmail'] = newContactEmail;
           if (newContactName.isNotEmpty) grantData['contactName'] = newContactName;
          if (newContactPhone.isNotEmpty) grantData['contactPhone'] = newContactPhone;
           if (newNonProfitName.isNotEmpty) grantData['nonprofitName'] = newNonProfitName;
           if (newResponse.isNotEmpty) grantData['response'] = newResponse;
           //if (newDescription.isNotEmpty) eventData['location'] = newDescription;
           if (newWebsite.isNotEmpty) grantData['website'] = newWebsite;
-        
+        */
           // Update the event information
-          grantRef.update(grantData).then((_) {
+          await grantRef.update(grantData).then((_) {
             // Event information updated successfully
             print('app information updated successfully');
           }).catchError((error) {
             // An error occurred while updating event information
             print('Error updating app information: $error');
           });
-        } else {
+        //} else {
           // Event data not found
-          print('app data not found');
-        }
-      } as FutureOr Function(DatabaseEvent value)).catchError((error) {
+        //  print('app data not found');
+      //  }
+      //} as FutureOr Function(DatabaseEvent value).catchError((error) {
         // An error occurred while fetching event data
-        print('Error fetching app data: $error');
-      });
+       // print('Error fetching app data: $error');
+    //  });
     } catch (e) {
       // Handle any other errors that occur during the process
       print('Error updating app information: $e');
@@ -522,7 +658,7 @@ class makeBox extends StatelessWidget {
    child: Column(
     children: [
       SizedBox(
-        width: 250,
+        width: 300,
       height: 55,
         child: DecoratedBox(
         decoration: BoxDecoration(color:Color(0xCAEBF2).withOpacity(1),),
@@ -535,7 +671,7 @@ class makeBox extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    contactEmail,
+                    grant.getGrantName(),
                     textAlign: TextAlign.left,
                     style: GoogleFonts.kreon(
                       color: const Color(0x555555).withOpacity(1),
@@ -544,7 +680,7 @@ class makeBox extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    contactName,
+                    grant.getDonorName(),
                     textAlign: TextAlign.left,
                     style: GoogleFonts.kreon(
                       color: const Color(0x555555).withOpacity(1),
@@ -559,7 +695,7 @@ class makeBox extends StatelessWidget {
         ),
       ),
     ),
-    SizedBox(width: 250, height: 315,
+    SizedBox(width: 300, height: 345,
       child: DecoratedBox(
         decoration: BoxDecoration(color: Colors.white),
         child: Padding(
@@ -581,9 +717,8 @@ class makeBox extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      
                       Text(
-                        '\t\t' + nonProfitName,
+                        '\t\t' + apps.nonprofitName,
                         textAlign: TextAlign.left,
                         style: GoogleFonts.kreon(
                           color: const Color(0x555555).withOpacity(1),
@@ -591,7 +726,26 @@ class makeBox extends StatelessWidget {
                           fontWeight: FontWeight.w300,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 5),
+                      Text(
+                        'Contact ',
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.kreon(
+                          color: const Color(0x555555).withOpacity(1),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      Text(
+                        '\t\t' + apps.contactName,
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.kreon(
+                          color: const Color(0x555555).withOpacity(1),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
                       Text(
                         'Phone: ',
                         textAlign: TextAlign.left,
@@ -603,7 +757,7 @@ class makeBox extends StatelessWidget {
                         ),
                         
                         Text(
-                        '\t\t' +  contactPhone,
+                        '\t\t' + apps.contactPhone,
                         textAlign: TextAlign.left,
                         style: GoogleFonts.kreon(
                           color: const Color(0x555555).withOpacity(1),
@@ -611,7 +765,25 @@ class makeBox extends StatelessWidget {
                           fontWeight: FontWeight.w300,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      Text(
+                        'Email ',
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.kreon(
+                          color: const Color(0x555555).withOpacity(1),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      Text(
+                        '\t\t' + apps.contactEmail,
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.kreon(
+                          color: const Color(0x555555).withOpacity(1),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
                       Text(
                         'Response: ',
                         textAlign: TextAlign.left,
@@ -621,9 +793,11 @@ class makeBox extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                         ),
                         ),
-                        
-                        Text(
-                        '\t\t' + Response,
+                        SizedBox(
+                          width: 175,
+                        child : Text(
+                        '\t\t' + apps.response,
+                        maxLines: 2,
                         textAlign: TextAlign.left,
                         style: GoogleFonts.kreon(
                           color: const Color(0x555555).withOpacity(1),
@@ -631,7 +805,8 @@ class makeBox extends StatelessWidget {
                           fontWeight: FontWeight.w300,
                         ),
                       ),
-                        const SizedBox(height: 10),
+                        ),
+                        const SizedBox(height: 5),
                         Text(
                         'Website: ',
                         textAlign: TextAlign.left,
@@ -644,9 +819,9 @@ class makeBox extends StatelessWidget {
                         
                         SizedBox(
                           width: 175,
-                          height: 60,
+                          height: 30,
                         child: Text(
-                        '\t\t' + website,
+                        '\t\t' + apps.website,
                         maxLines: 3,
                         style: GoogleFonts.kreon(
                           color: const Color(0x555555).withOpacity(1),
@@ -655,7 +830,7 @@ class makeBox extends StatelessWidget {
                         ),
                         ),
                         ),
-                        const SizedBox(height: 20)
+                        const SizedBox(height: 15)
                         ],
                       ),
                   ),
@@ -665,14 +840,11 @@ class makeBox extends StatelessWidget {
                   Row (
                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    
-                    //mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       SizedBox(width: 20),
                       ElevatedButton(
                         onPressed: () async {
-                           String? grantId = await getGrantId(uid!);
-                            _showEditGrantDialog(context, grantId!);
+                            _showEditGrantDialog(context, grant.grantKey);
                          },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xCAEBF2).withOpacity(1),

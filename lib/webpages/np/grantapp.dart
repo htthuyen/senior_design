@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../authentication/auth.dart';
 import 'dart:async';
 import '../../webcomponents/usertopbar.dart';
+
+import 'package:givehub/webcomponents/np_topbar.dart';
 import 'grantsub.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -179,7 +181,7 @@ class _GrantAppState extends State<GrantApp> {
     return Scaffold(
         key: _scaffoldKey,
         appBar: UserTopBar(),
-              endDrawer: NpTopDrawer(),
+              endDrawer: NpTopBar(),
         body: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
