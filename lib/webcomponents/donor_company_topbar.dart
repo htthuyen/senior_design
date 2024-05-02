@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../authentication/auth.dart';
 import '../webpages/company_donor/currentevents.dart';
+import '../webpages/company_donor/companyprofilepage.dart';
+import '../webpages/company_donor/donorprofile.dart';
 import '../webpages/company_donor/donationofinterestspage.dart';
 import '../webpages/company_donor/donorcompanydonationhistory.dart';
 import '../webpages/company_donor/donorpaymentpage.dart';
@@ -66,6 +68,23 @@ class DonorComTopBar extends StatelessWidget implements PreferredSizeWidget {
                   collapsedIconColor: Colors.white,
                   trailing: Icon(Icons.expand_more, color: Colors.white), 
                   children: [
+                    ListTile(
+                      title: Text(
+                        'My Profile',
+                        style: GoogleFonts.oswald(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                      onTap: () async {
+                         String? userType = await getUserTypeFromDatabase(uid!) as String?;
+                            if (userType == 'Individual Donor') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DonorProfilePage()));
+                            } else if (userType == 'Company') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CompanyProfilePage()));
+                            }
+                      },
+                    ),
                     ListTile(
                       title: Text(
                         'Edit Profile',
