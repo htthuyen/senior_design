@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../authentication/auth.dart';
+import '../webpages/company_donor/currentevents.dart';
 import '../webpages/company_donor/donationofinterestspage.dart';
 import '../webpages/company_donor/donorcompanydonationhistory.dart';
 import '../webpages/company_donor/donorpaymentpage.dart';
@@ -15,6 +16,7 @@ import '../webpages/company_donor/myeventspage.dart';
 import '../webpages/company_donor/nonmondon.dart';
 import '../webpages/notificationspage.dart';
 import '../webpages/np/grantapp.dart';
+import '../webpages/subscription.dart';
 
 class DonorComTopBar extends StatelessWidget implements PreferredSizeWidget {
 
@@ -277,7 +279,7 @@ class DonorComTopBar extends StatelessWidget implements PreferredSizeWidget {
                   onTap: () {
                     Navigator.push(context, new MaterialPageRoute(
                           builder: (context) =>
-                          SubscriptionsPage())
+                          SubscriptionPage())
                      );
                   },
                 ),
