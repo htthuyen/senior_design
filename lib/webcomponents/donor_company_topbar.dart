@@ -415,27 +415,27 @@ class DonorComTopBar extends StatelessWidget implements PreferredSizeWidget {
                   children: [
                     TextFormField(
                       controller: nameController,
-                      decoration: InputDecoration(labelText: 'Name'),
+                      decoration: InputDecoration(hintText: 'Name'),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: emailController,
-                      decoration: InputDecoration(labelText: 'Email'),
+                      decoration: InputDecoration(hintText: 'Email'),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: phoneController,
-                      decoration: InputDecoration(labelText: 'Phone'),
+                      decoration: InputDecoration(hintText: 'Phone'),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: memberSinceController,
-                      decoration: InputDecoration(labelText: 'Member Since'),
+                      decoration: InputDecoration(hintText: 'Member Since'),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: companyInfoController,
-                      decoration: InputDecoration(labelText: 'Company Info'),
+                      decoration: InputDecoration(hintText: 'Company Info'),
                     ),
                   ],
                 ),
