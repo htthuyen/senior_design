@@ -4,6 +4,7 @@ import 'package:givehub/webcomponents/usertopbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'grantapp.dart';
 import '../../authentication/auth.dart';
+import 'myapps.dart';
 
 class GrantSub extends StatefulWidget {
   @override
@@ -489,7 +490,9 @@ class _GrantSubState extends State<GrantSub> {
                                           phoneController.text, 
                                           responseController.text, 
                                       );
-                                      Navigator.pushNamed(context, '/np_applicationstatus');
+                                      Navigator.push(context, new MaterialPageRoute(
+                                                      builder: (context) =>
+                                                      MyApps()));;
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: const Color(0xFFFF3B3F).withOpacity(1),
@@ -514,7 +517,9 @@ class _GrantSubState extends State<GrantSub> {
                                     const SizedBox(width:10), 
                                     ElevatedButton(
                                       onPressed: () {
-                                        Navigator.pushNamed(context, '/grantapp');
+                                        Navigator.push(context, new MaterialPageRoute(
+                                                      builder: (context) =>
+                                                      GrantApp()));
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: const Color(0xAAD1DA).withOpacity(1),
