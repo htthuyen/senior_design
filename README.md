@@ -11,7 +11,7 @@
 ### Here are the accounts and their information, if you would prefer to utilize these accounts.
 ### Np 6: Non-profit Organization, email: np6@gmail.com, password: Np12345!
 ### Great One: Company, email: greateone@gmail.com, password: Gr3@tone  
-### Patrick Smith: Individual Donor, email: psmith1257@gmail.com, password: Smith1234!
+### Patrick Smith: Individual Donor, email: psmith12357@gmail.com, password: Smith1234!
 
 ## Webpages:
 ### About us: The About us page provides information about our purpose.
