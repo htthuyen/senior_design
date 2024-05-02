@@ -31,7 +31,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
               Navigator.push(
                   context,
                   new MaterialPageRoute(
-                      builder: (context) => new AboutUsPage()));
+                      builder: (context) => AboutUsPage()));
             },
             child: Text(
               'About Us',
@@ -49,7 +49,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
           child: TextButton(
             onPressed: () {
               Navigator.push(context,
-                  new MaterialPageRoute(builder: (context) => new SignUp()));
+                  new MaterialPageRoute(builder: (context) => SignUp()));
             },
             child: Text(
               'Sign Up',
@@ -65,7 +65,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
           child: TextButton(
             onPressed: () {
               Navigator.push(context,
-                  new MaterialPageRoute(builder: (context) => new Login()));
+                  new MaterialPageRoute(builder: (context) => Login()));
             },
             child: Text(
               'Login',
@@ -82,7 +82,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
         child: TextButton(
           onPressed: () {
             Navigator.push(context,
-                new MaterialPageRoute(builder: (context) => new WelcomePage()));
+                new MaterialPageRoute(builder: (context) => WelcomePage()));
           },
           child: Text(
             'GiveHub',

@@ -15,6 +15,8 @@
 
 ## Webpages:
 ### About us: The About us page provides information about our purpose.
+### All events: Displays all of the events created by a non-profit to the donor/company on their profile.
+### All grants: Displays all of the grants created by that donor/company to non-profits on their profile.
 ### main.dart: Houses all the routes for our webpages, allowing us to connect our webpages.
 ### auth.dart: Contains a majority of our back-end functions: such as validating user, user sign-up, retrieving events for users, etc...
 ### Company Profile: The profile page for Companies.
@@ -22,6 +24,7 @@
 ### Connections: Represents our Recommended Connections page. This page takes the donations of interest data from our Donation of Interests Page completed by donors and companies when they sign up, and links them to nonprofits who have the needs of those interests.
 ### Contact us: The Contact Us Page is to provide our users with our company’s contact info.
 ### Create event: The create event page is for nonprofits to create events to provide for their needs.
+### Current Events Page: This page displays all the events currently in the system to donors/companies to be able to register for events. This will then lead them to the sign up page.
 ### Donation Of Interests: This page is completed by donors and companies when they sign up for an account. This page takes the selected donations that companies and donors are interested in, and then links them to nonprofits who have the needs of those interests vis the Connections page.
 ### Donor Company Donation History: The Donor Company Donation History Page is to show the donation history (monetary and non-monetary) of donor/company
 ### Donor Payment Page : The Donor Payment Page is the form to let donor/company fill out the monetary donation

@@ -427,7 +427,7 @@ class _NPProfileSearchPageState extends State<NPProfileSearchPage> {
                           onPressed: () {
                            Navigator.push(context, new MaterialPageRoute(
                             builder: (context) =>
-                            GrantStatusPage())
+                            AllEventsPage(userId: widget.userId))
                           );
                           },
                         ),
