@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+import 'package:givehub/webpages/search.dart';
+import 'package:givehub/webpages/welcomepage.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class UserTopBar extends StatelessWidget implements PreferredSizeWidget {
+  final Color backgroundColor = Color(0xFFFF3B3F);
+
+  @override
+  Widget build(BuildContext context) {
+    //this section
+    return AppBar(
+      leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          color: Colors.white,
+        ),
+        title: GestureDetector(
+          onTap: () {
+            Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new WelcomePage()));
+          },
+          child: Text(
+            'GiveHub',
+            style: GoogleFonts.oswald(
+              fontSize: 30,
+            ),
+          ),
+        ),
+        centerTitle: false,
+        backgroundColor: const Color(0xFFFF3B3F),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new SearchPage()));
+            },
+            icon: Icon(Icons.search, color: Colors.white),
+          ),
+          IconButton(
+            onPressed: () {
+              Scaffold.of(context).openEndDrawer();
+            },
+            icon: Icon(Icons.menu, color: Colors.white),
+          ),
+        ],
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}

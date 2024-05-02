@@ -26,7 +26,7 @@ import 'webpages/notificationspage.dart';
 import 'webpages/np/createevent.dart';
 import 'webpages/np/eventnp.dart';
 import 'webpages/np/events.dart';
-import 'webpages/np/featurednonprofits.dart';
+import 'webpages/featurednonprofits.dart';
 import 'webpages/np/grantapp.dart';
 import 'webpages/np/grantstatus.dart';
 import 'webpages/np/grantsub.dart';

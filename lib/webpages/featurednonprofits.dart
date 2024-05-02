@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:givehub/webcomponents/topbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FeaturedNonProfitPage extends StatefulWidget {
@@ -29,85 +30,7 @@ class _FeaturedNonProfitPageState extends State<FeaturedNonProfitPage> {
       ),
       home: Scaffold(
         //the top portion of the webpage
-        appBar: AppBar(
-          backgroundColor: const Color(0xFFFF3B3F),
-          elevation: 0,
-          actions: [
-            //padding can be used to help add space or move items
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {
-                  // Handle search button press here
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: TextButton(
-                //control the flow of buttons when pressed
-                onPressed: () {
-                  Navigator.pushNamed(context, '/aboutus');
-                },
-                child: Text(
-                  'About Us',
-                  //change change the font, size, color, and bold/thinness
-                  style: GoogleFonts.oswald(
-                    color: Colors.white,
-                    fontSize: 16,
-                    //fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/signup');
-                },
-                child: Text(
-                  'Sign Up',
-                  style: GoogleFonts.oswald(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/login');
-                },
-                child: Text(
-                  'Login',
-                  style: GoogleFonts.oswald(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-          ],
-          title: Align(
-            alignment: Alignment.topLeft,
-            child: TextButton(
-              onPressed: () {
-                Navigator.popUntil(context, (route) => route.isFirst);
-              },
-              child: Text(
-                'GiveHub',
-                style: GoogleFonts.oswald(
-                  color: Colors.white,
-                  fontSize: 30,
-                ),
-              ),
-            ),
-          ),
-        ),
+        appBar: TopBar(),
         body: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
