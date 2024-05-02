@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:givehub/webcomponents/donor_company_topbar.dart';
+import 'package:givehub/webcomponents/np_topbar.dart';
+import 'package:givehub/webcomponents/usertopbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../authentication/auth.dart';
-import '../webcomponents/usertopbar.dart';
 import 'company_donor/companyprofilesearch.dart';
 import 'company_donor/donorprofilesearch.dart';
 import 'np/npprofilesearch.dart';
@@ -28,7 +30,7 @@ class User {
   Map<String, dynamic> toJson() {
     return {
       'userId': userId,
-      'userName': name,
+      'userName': userName,
       //'aboutUs': aboutUs,
       'userType': userType,
       //'isFavorite': isFavorite,
@@ -41,15 +43,16 @@ class _SearchPage extends State<SearchPage> {
   List<User> _foundUsers = [];
   final DatabaseReference _database = FirebaseDatabase.instance.reference();
 
-
+  String? usertype;
   @override
   void initState() {
     //_foundUsers = _allUsers;
     super.initState();
-    getUser().then((_) {
+    getUser().then((_) async {
       if (uid != null) {
         //getGrantsFromDatabase(uid!); 
         getUsersFromDatabase(uid!);
+        usertype = await getUserTypeFromDatabase(uid!);
       } else {
         showSnackBar(context, 'User ID not found. Please log in again.');
         Navigator.pushReplacementNamed(context, '/login'); 
@@ -188,6 +191,7 @@ class _SearchPage extends State<SearchPage> {
       home: Scaffold(
         //the top portion of the webpage
         appBar: UserTopBar(),
+        endDrawer: (usertype?.toLowerCase() == 'nonprofit organization') ? NpTopBar() : DonorComTopBar(),
         body: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(
