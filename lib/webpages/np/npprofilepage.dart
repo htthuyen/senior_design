@@ -75,8 +75,8 @@ class _NPProfilePageState extends State<NPProfilePage> {
             email = userEmail;
             aboutUs = 'Give a 10 word description of your non-profit.';
             weAreSeeking = 'We are currently seeking: ' + trimmedUserWeAreSeeking;
-            member = 'Member since: '+ memberSince;
-            website = 'Website: ';
+            member =  memberSince;
+            website = 'website';
           });
         }
       });
@@ -353,12 +353,12 @@ class _NPProfilePageState extends State<NPProfilePage> {
                         ),
                         SizedBox(height: 30),
                         Text(
-                          member,
+                          'Member Since: '+ member,
                           style: GoogleFonts.oswald(fontSize: 28, color:Color(0x555555).withOpacity(1))
                         ),
                         SizedBox(height: 30),
                         Text(
-                          website,
+                          'Website: ' + website,
                           style: GoogleFonts.oswald(fontSize: 28, color:Color(0x555555).withOpacity(1))
                         ),
                       ],
