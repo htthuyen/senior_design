@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../authentication/auth.dart';
 import '../webpages/company_donor/donorcompanydonationhistory.dart';
+import '../webpages/notificationspage.dart';
 import '../webpages/np/createevent.dart';
 import '../webpages/np/eventnp.dart';
 import '../webpages/np/grantapp.dart';
@@ -164,7 +165,7 @@ class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       ListTile(
                         title: Text(
-                          'Your Events',
+                          'My Events',
                           style: GoogleFonts.oswald(
                             color: Colors.white,
                             fontSize: 18,
@@ -261,7 +262,10 @@ class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     onTap: () {
-                     Navigator.pushNamed(context, '/notifications');
+                     Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                            NotificationsPage())
+                          );
                     },
                   ),
                   ListTile(

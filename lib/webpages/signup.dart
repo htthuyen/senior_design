@@ -62,7 +62,7 @@ class _SignUpState extends State<SignUp> {
                      height: 55,
                      child: Text(
                        'Create an Account',
-                       textAlign: TextAlign.left,
+                       textAlign: TextAlign.center,
                        style: GoogleFonts.oswald(
                          color: Color(0xFF545454),
                          fontSize: 45,
