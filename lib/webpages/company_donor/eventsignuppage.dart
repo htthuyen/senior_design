@@ -1,38 +1,13 @@
 //this page allows donors/companies to sign up for events created by non-profits
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:givehub/donorprofile.dart';
-import 'package:givehub/welcomepage.dart';
+import 'package:givehub/authentication/auth.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'auth.dart';
-import 'companyprofilepage.dart';
-import 'create_event.dart';
+
+import '../../webcomponents/donor_company_topbar.dart';
+import '../../webcomponents/usertopbar.dart';
 import 'currentevents.dart';
-import 'donationofinterestspage.dart';
-import 'donor_company_donationhistory.dart';
-import 'donorpaymentpage.dart';
-import 'event_history.dart';
-import 'events_np.dart';
-import 'grantcreationpage.dart';
-import 'myeventspage.dart';
-import 'needs.dart';
-import 'nonmondon.dart';
-import 'notificationspage.dart';
-import 'np_applicationstatus.dart';
-import 'np_donationreview.dart';
-import 'np_history.dart';
-import 'npprofilepage.dart';
-import 'npselectionpage.dart';
-import 'search.dart';
-import 'subscriptions.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'grantapp.dart';
-import 'auth.dart';
 
 class EventSignUpPage extends StatefulWidget {
 
