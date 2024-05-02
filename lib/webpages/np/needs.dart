@@ -40,7 +40,7 @@ class _NeedsPageState extends State<NeedsPage> {
   void _handleContinue() async {
     final DatabaseReference _userRef = await _initializeUserRef();
     _userRef.child('selectedNeeds').set(selectedNeeds.map((need) => {need: true}).toList());
-    Navigator.pushNamed(context, '/npprofile');
+     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NPProfilePage()));
   }
 
   Future<DatabaseReference> _initializeUserRef() async {

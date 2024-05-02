@@ -17,7 +17,10 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
         onPressed: () {
-          Navigator.pop(context);
+          Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => WelcomePage()));
         },
         color: Colors.white, // Change the color here
       ),
