@@ -10,7 +10,8 @@ import 'package:givehub/webpages/np/grantstatus.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../authentication/auth.dart';
-import '../webpages/company_donor/donorcompanydonationhistory.dart';
+import '../webpages/company_donor/companyprofilepage.dart';
+import '../webpages/company_donor/donorprofile.dart';
 import '../webpages/notificationspage.dart';
 import '../webpages/np/createevent.dart';
 import '../webpages/np/eventnp.dart';
@@ -19,6 +20,7 @@ import '../webpages/np/myapps.dart';
 import '../webpages/np/needs.dart';
 import '../webpages/np/npdonationhistory.dart';
 import '../webpages/np/npdonationreview.dart';
+import '../webpages/np/npprofilepage.dart';
 import '../webpages/subscription.dart';
 
 class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
@@ -67,14 +69,23 @@ class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
                     children: [
                       ListTile(
                         title: Text(
-                          'Edit Profile',
+                          'My Profile',
                           style: GoogleFonts.oswald(
                             color: Colors.white,
                             fontSize: 18,
                           ),
                         ),
-                        onTap: () {
-                          _showEditProfileDialog(context);
+                        onTap: () async {
+                          //final isValid = _formKey.currentState!.validate();
+                               
+                            String? userType = await getUserTypeFromDatabase(uid!) as String?;
+                            if (userType == 'Nonprofit Organization') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NPProfilePage()));
+                            } else if (userType == 'Individual Donor') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DonorProfilePage()));
+                            } else if (userType == 'Company') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CompanyProfilePage()));
+                            }
                         },
                       ),
                       ListTile(
@@ -352,136 +363,136 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   }
 
 
-  void _showEditProfileDialog(BuildContext context) {
-    TextEditingController aboutUsController = TextEditingController(text: aboutUs);
-    TextEditingController weAreSeekingController = TextEditingController(text: weAreSeeking);
-    TextEditingController nameController = TextEditingController(text: name);
-    TextEditingController memberSinceController = TextEditingController(text: member);
-    TextEditingController websiteController = TextEditingController(text: website);
-    TextEditingController emailController = TextEditingController(text: email);
+  // void _showEditProfileDialog(BuildContext context) {
+  //   TextEditingController aboutUsController = TextEditingController(text: aboutUs);
+  //   TextEditingController weAreSeekingController = TextEditingController(text: weAreSeeking);
+  //   TextEditingController nameController = TextEditingController(text: name);
+  //   TextEditingController memberSinceController = TextEditingController(text: member);
+  //   TextEditingController websiteController = TextEditingController(text: website);
+  //   TextEditingController emailController = TextEditingController(text: email);
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
         
-        return Dialog(
-          child: Container(
-            width: 800, 
-            height: 600,
-            child: AlertDialog(
+  //       return Dialog(
+  //         child: Container(
+  //           width: 800, 
+  //           height: 600,
+  //           child: AlertDialog(
 
-              iconColor: Color(0xAAD1DA).withOpacity(1),
-              backgroundColor: Color(0xCAEBF2).withOpacity(1),
-              title: Text(
-                'Edit Profile',
-                style: GoogleFonts.oswald(
-                  color: Color(0x555555).withOpacity(1), 
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                ),
-              ),
-              content: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Name', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
-                      style: GoogleFonts.oswald(
-                        color: Color(0x555555).withOpacity(1), 
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                      controller: nameController,
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Email', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
-                      style: GoogleFonts.oswald(
-                        color: Color(0x555555).withOpacity(1), 
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                      controller: emailController,
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'About Us', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100,color: Color(0x555555).withOpacity(1))),
-                      style: GoogleFonts.oswald(
-                        color: Color(0x555555).withOpacity(1), 
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                      controller: aboutUsController,
-                    ),
+  //             iconColor: Color(0xAAD1DA).withOpacity(1),
+  //             backgroundColor: Color(0xCAEBF2).withOpacity(1),
+  //             title: Text(
+  //               'Edit Profile',
+  //               style: GoogleFonts.oswald(
+  //                 color: Color(0x555555).withOpacity(1), 
+  //                 fontWeight: FontWeight.bold,
+  //                 fontSize: 30,
+  //               ),
+  //             ),
+  //             content: SingleChildScrollView(
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   TextFormField(
+  //                     decoration: InputDecoration(labelText: 'Name', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
+  //                     style: GoogleFonts.oswald(
+  //                       color: Color(0x555555).withOpacity(1), 
+  //                       fontWeight: FontWeight.bold,
+  //                       fontSize: 20,
+  //                     ),
+  //                     controller: nameController,
+  //                   ),
+  //                   const SizedBox(height: 20),
+  //                   TextFormField(
+  //                     decoration: InputDecoration(labelText: 'Email', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
+  //                     style: GoogleFonts.oswald(
+  //                       color: Color(0x555555).withOpacity(1), 
+  //                       fontWeight: FontWeight.bold,
+  //                       fontSize: 20,
+  //                     ),
+  //                     controller: emailController,
+  //                   ),
+  //                   const SizedBox(height: 20),
+  //                   TextFormField(
+  //                     decoration: InputDecoration(labelText: 'About Us', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100,color: Color(0x555555).withOpacity(1))),
+  //                     style: GoogleFonts.oswald(
+  //                       color: Color(0x555555).withOpacity(1), 
+  //                       fontWeight: FontWeight.bold,
+  //                       fontSize: 20,
+  //                     ),
+  //                     controller: aboutUsController,
+  //                   ),
                     
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Member Since', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100,color: Color(0x555555).withOpacity(1))),
-                      style: GoogleFonts.oswald(
-                        color: Color(0x555555).withOpacity(1), 
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                      controller: memberSinceController,
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Website', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
-                      style: GoogleFonts.oswald(
-                        color: Color(0x555555).withOpacity(1), 
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                      controller: websiteController,
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    'Cancel',
-                    style: GoogleFonts.oswald(
-                        color: Color(0x555555).withOpacity(1), 
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
+  //                   const SizedBox(height: 20),
+  //                   TextFormField(
+  //                     decoration: InputDecoration(labelText: 'Member Since', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100,color: Color(0x555555).withOpacity(1))),
+  //                     style: GoogleFonts.oswald(
+  //                       color: Color(0x555555).withOpacity(1), 
+  //                       fontWeight: FontWeight.bold,
+  //                       fontSize: 20,
+  //                     ),
+  //                     controller: memberSinceController,
+  //                   ),
+  //                   const SizedBox(height: 20),
+  //                   TextFormField(
+  //                     decoration: InputDecoration(labelText: 'Website', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
+  //                     style: GoogleFonts.oswald(
+  //                       color: Color(0x555555).withOpacity(1), 
+  //                       fontWeight: FontWeight.bold,
+  //                       fontSize: 20,
+  //                     ),
+  //                     controller: websiteController,
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //             actions: <Widget>[
+  //               TextButton(
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: Text(
+  //                   'Cancel',
+  //                   style: GoogleFonts.oswald(
+  //                       color: Color(0x555555).withOpacity(1), 
+  //                       fontWeight: FontWeight.bold,
+  //                       fontSize: 20,
+  //                     ),
+  //                 ),
+  //               ),
+  //               TextButton(
+  //                 onPressed: () {
                     
-                    _updateProfile(
-                      newName: nameController.text,
-                      newEmail: 'new@example.com',
-                      //newPhone: '1234567890',
-                      newAboutUs: aboutUsController.text,
-                      //newWeAreSeeking: weAreSeekingController.text,
-                      newMember: memberSinceController.text,
-                      newWebsite: websiteController.text
-                    );
+  //                   _updateProfile(
+  //                     newName: nameController.text,
+  //                     newEmail: 'new@example.com',
+  //                     //newPhone: '1234567890',
+  //                     newAboutUs: aboutUsController.text,
+  //                     //newWeAreSeeking: weAreSeekingController.text,
+  //                     newMember: memberSinceController.text,
+  //                     newWebsite: websiteController.text
+  //                   );
 
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    'Save',
-                    style: GoogleFonts.oswald(
-                        color: Color(0x555555).withOpacity(1), 
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: Text(
+  //                   'Save',
+  //                   style: GoogleFonts.oswald(
+  //                       color: Color(0x555555).withOpacity(1), 
+  //                       fontWeight: FontWeight.bold,
+  //                       fontSize: 20,
+  //                     ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   void _showLogoutDialog(BuildContext context) {
     showDialog(

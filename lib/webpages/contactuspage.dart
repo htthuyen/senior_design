@@ -11,6 +11,7 @@ class ContactUsPage extends StatefulWidget {
 class _ContactUsPageState extends State<ContactUsPage> {
   Color buttonColor = Color(0xCAEBF2);
   double buttonFontSize = 20;
+  final Uri url = Uri.parse('https://maps.app.goo.gl/i97YxaotmmcFXJCi7');
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +85,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                               ),
                               TextButton(
                                   onPressed: () { 
-                                    launchUrl('https://maps.app.goo.gl/i97YxaotmmcFXJCi7' as Uri);
+                                    launchUrl(url);
                                   },
                                   child: Text(
                                   '800 W Campbell Rd, Richardson, TX 75080',
@@ -123,16 +124,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                               TextButton(
-                                  onPressed: () { 
-                                    final Uri emailLaunchUri = Uri(
-                                        scheme: 'mailto',
-                                        path: 'GiveHub@gmail.com',
-                                      );
-
-                                      launchUrl(emailLaunchUri);
-                                  },
-                                  child: Text(
+                                Text(
                                   'Email Us:',
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.oswald(
@@ -141,14 +133,23 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                     fontWeight: FontWeight.bold                          
                                   ),
                                 ),
-                                
-                              ),
-                              Text(
-                                'GiveHub@gmail.com',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.oswald(
-                                  color: const Color(0x555555).withOpacity(1),
-                                  fontSize: buttonFontSize,
+                              
+                              TextButton(
+                                onPressed: () { 
+                                    final Uri emailLaunchUri = Uri(
+                                        scheme: 'mailto',
+                                        path: 'GiveHub@gmail.com',
+                                      );
+
+                                      launchUrl(emailLaunchUri);
+                                  },
+                                child: Text(
+                                  'GiveHub@gmail.com',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.oswald(
+                                    color: const Color(0x555555).withOpacity(1),
+                                    fontSize: buttonFontSize,
+                                  ),
                                 ),
                               ),
                               ],

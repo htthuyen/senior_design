@@ -1,23 +1,14 @@
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:givehub/authentication/auth.dart';
 import 'package:givehub/webcomponents/donor_company_topbar.dart';
+import 'package:givehub/webcomponents/profilepicture.dart';
 import 'package:givehub/webcomponents/usertopbar.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../allgrants.dart';
-import 'donationofinterestspage.dart';
-import 'donorcompanydonationhistory.dart';
-import 'donorpaymentpage.dart';
-import 'eventhistory.dart';
-import 'eventsignuppage.dart';
-import '../np/grantapp.dart';
-import 'grantcreationpage.dart';
-import 'myeventspage.dart';
-import 'nonmondon.dart';
-import '../notificationspage.dart';
-import 'package:givehub/webcomponents/profilepicture.dart';
-import 'package:givehub/authentication/auth.dart';
 import 'publicdonationhistory.dart';
 
 class CompanyProfileSearchPage extends StatefulWidget {

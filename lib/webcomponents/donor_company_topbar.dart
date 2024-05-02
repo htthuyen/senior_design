@@ -1,23 +1,23 @@
-import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../authentication/auth.dart';
+import '../webpages/company_donor/companyprofilepage.dart';
 import '../webpages/company_donor/currentevents.dart';
 import '../webpages/company_donor/donationofinterestspage.dart';
 import '../webpages/company_donor/donorcompanydonationhistory.dart';
 import '../webpages/company_donor/donorpaymentpage.dart';
+import '../webpages/company_donor/donorprofile.dart';
 import '../webpages/company_donor/eventhistory.dart';
-import '../webpages/company_donor/eventsignuppage.dart';
 import '../webpages/company_donor/grantcreationpage.dart';
 import '../webpages/company_donor/myeventspage.dart';
 import '../webpages/company_donor/mygrants.dart';
 import '../webpages/company_donor/nonmondon.dart';
 import '../webpages/company_donor/npselectionpage.dart';
 import '../webpages/notificationspage.dart';
-import '../webpages/np/grantapp.dart';
+import '../webpages/np/npprofilepage.dart';
 import '../webpages/subscription.dart';
 
 class DonorComTopBar extends StatelessWidget implements PreferredSizeWidget {
@@ -67,17 +67,26 @@ class DonorComTopBar extends StatelessWidget implements PreferredSizeWidget {
                   trailing: Icon(Icons.expand_more, color: Colors.white), 
                   children: [
                     ListTile(
-                      title: Text(
-                        'Edit Profile',
-                        style: GoogleFonts.oswald(
-                          color: Colors.white,
-                          fontSize: 18,
+                        title: Text(
+                          'My Profile',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
                         ),
+                        onTap: () async {
+                          //final isValid = _formKey.currentState!.validate();
+                               
+                            String? userType = await getUserTypeFromDatabase(uid!) as String?;
+                            if (userType == 'Nonprofit Organization') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NPProfilePage()));
+                            } else if (userType == 'Individual Donor') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DonorProfilePage()));
+                            } else if (userType == 'Company') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CompanyProfilePage()));
+                            }
+                        },
                       ),
-                      onTap: () {
-                        _showEditProfileDialog(context);
-                      },
-                    ),
                     ListTile(
                       title: Text(
                         'Update Interests',
@@ -367,88 +376,88 @@ class DonorComTopBar extends StatelessWidget implements PreferredSizeWidget {
     }
   }
 
-  void _showEditProfileDialog(BuildContext context) {
-    TextEditingController nameController = TextEditingController(text: name);
-    TextEditingController emailController = TextEditingController(text: email);
-    TextEditingController phoneController = TextEditingController(text: phone);
-    TextEditingController memberSinceController = TextEditingController(text: member);
-    TextEditingController companyInfoController = TextEditingController(text: companyInfo);
+  // void _showEditProfileDialog(BuildContext context) {
+  //   TextEditingController nameController = TextEditingController(text: name);
+  //   TextEditingController emailController = TextEditingController(text: email);
+  //   TextEditingController phoneController = TextEditingController(text: phone);
+  //   TextEditingController memberSinceController = TextEditingController(text: member);
+  //   TextEditingController companyInfoController = TextEditingController(text: companyInfo);
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          child: Container(
-            width: 800, 
-            height: 600,
-            color: Color(0xCAEBF2).withOpacity(1),
-            child: AlertDialog(
-              backgroundColor: Color(0xCAEBF2).withOpacity(1),
-              title: Text(
-                'Edit Profile',
-                style: GoogleFonts.oswald(
-                  fontSize: 30,
-                ),
-              ),
-              content: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFormField(
-                      controller: nameController,
-                      decoration: InputDecoration(labelText: 'Name'),
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: emailController,
-                      decoration: InputDecoration(labelText: 'Email'),
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: phoneController,
-                      decoration: InputDecoration(labelText: 'Phone'),
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: memberSinceController,
-                      decoration: InputDecoration(labelText: 'Member Since'),
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: companyInfoController,
-                      decoration: InputDecoration(labelText: 'Company Info'),
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Cancel', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
-                ),
-                TextButton(
-                  onPressed: () {
-                    _updateProfile(
-                      newName: nameController.text,
-                      newEmail: emailController.text,
-                      newPhone: phoneController.text,
-                      newMember: memberSinceController.text,
-                      newCompanyInfo: companyInfoController.text,
-                    );
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Dialog(
+  //         child: Container(
+  //           width: 800, 
+  //           height: 600,
+  //           color: Color(0xCAEBF2).withOpacity(1),
+  //           child: AlertDialog(
+  //             backgroundColor: Color(0xCAEBF2).withOpacity(1),
+  //             title: Text(
+  //               'Edit Profile',
+  //               style: GoogleFonts.oswald(
+  //                 fontSize: 30,
+  //               ),
+  //             ),
+  //             content: SingleChildScrollView(
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   TextFormField(
+  //                     controller: nameController,
+  //                     decoration: InputDecoration(labelText: 'Name'),
+  //                   ),
+  //                   const SizedBox(height: 20),
+  //                   TextFormField(
+  //                     controller: emailController,
+  //                     decoration: InputDecoration(labelText: 'Email'),
+  //                   ),
+  //                   const SizedBox(height: 20),
+  //                   TextFormField(
+  //                     controller: phoneController,
+  //                     decoration: InputDecoration(labelText: 'Phone'),
+  //                   ),
+  //                   const SizedBox(height: 20),
+  //                   TextFormField(
+  //                     controller: memberSinceController,
+  //                     decoration: InputDecoration(labelText: 'Member Since'),
+  //                   ),
+  //                   const SizedBox(height: 20),
+  //                   TextFormField(
+  //                     controller: companyInfoController,
+  //                     decoration: InputDecoration(labelText: 'Company Info'),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //             actions: <Widget>[
+  //               TextButton(
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: Text('Cancel', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
+  //               ),
+  //               TextButton(
+  //                 onPressed: () {
+  //                   _updateProfile(
+  //                     newName: nameController.text,
+  //                     newEmail: emailController.text,
+  //                     newPhone: phoneController.text,
+  //                     newMember: memberSinceController.text,
+  //                     newCompanyInfo: companyInfoController.text,
+  //                   );
 
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Save', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: Text('Save', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
    void _showLogoutDialog(BuildContext context) {
     showDialog(

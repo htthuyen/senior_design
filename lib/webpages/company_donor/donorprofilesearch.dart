@@ -1,23 +1,14 @@
 import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:givehub/webcomponents/usertopbar.dart';
-import 'donationofinterestspage.dart';
-import 'donorcompanydonationhistory.dart';
-import 'donorpaymentpage.dart';
-import 'eventhistory.dart';
-import 'eventsignuppage.dart';
-import 'grantcreationpage.dart';
-import 'myeventspage.dart';
-import 'mygrants.dart';
-import 'nonmondon.dart';
-import '../notificationspage.dart';
-import 'publicdonationhistory.dart';
-import '../subscription.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../allgrants.dart';
-import 'package:givehub/webcomponents/profilepicture.dart';
 import 'package:givehub/authentication/auth.dart';
+import 'package:givehub/webcomponents/profilepicture.dart';
+import 'package:givehub/webcomponents/usertopbar.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../allgrants.dart';
+import 'publicdonationhistory.dart';
 
 class DonorProfileSearchPage extends StatefulWidget {
   final String userId;
@@ -62,7 +53,7 @@ class _DonorProfileSearchPageState extends State<DonorProfileSearchPage> {
         setState((){
           name = '$userName';
           email = '$userEmail';
-          member = 'Member Since: ' + '$userMembership';
+          member = '$userMembership';
           phone = '$userPhone';
           companyInfo = 'Company Info: ';
 

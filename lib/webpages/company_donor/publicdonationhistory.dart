@@ -1,26 +1,28 @@
 import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:givehub/webpages/np/grantstatus.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'companyprofilepage.dart';
+
+import '../../authentication/auth.dart';
+import '../notificationspage.dart';
 import '../np/createevent.dart';
+import '../np/eventnp.dart';
+import '../np/grantapp.dart';
+import '../np/needs.dart';
+import '../np/npdonationreview.dart';
+import '../np/npprofilepage.dart';
+import 'companyprofilepage.dart';
 import 'donationofinterestspage.dart';
 import 'donorcompanydonationhistory.dart';
 import 'donorpaymentpage.dart';
 import 'donorprofile.dart';
 import 'eventhistory.dart';
-import '../np/eventnp.dart';
 import 'eventsignuppage.dart';
-import '../np/grantapp.dart';
 import 'grantcreationpage.dart';
 import 'myeventspage.dart';
-import '../np/needs.dart';
 import 'nonmondon.dart';
-import '../notificationspage.dart';
-import '../np/npdonationreview.dart';
-import '../np/npprofilepage.dart';
-import '../../authentication/auth.dart';
 
 
 class PublicDonationHistory extends StatefulWidget {
@@ -351,28 +353,28 @@ class NPEndDrawer extends StatelessWidget {
                      collapsedIconColor: Colors.white,
                     trailing: Icon(Icons.expand_more, color: Colors.white), 
                     children: [
-                      ListTile(
-                        title: Text(
-                          'Edit Profile',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        onTap: () async {
-                          //final isValid = _formKey.currentState!.validate();
+                      // ListTile(
+                      //   title: Text(
+                      //     'Edit Profile',
+                      //     style: GoogleFonts.oswald(
+                      //       color: Colors.white,
+                      //       fontSize: 18,
+                      //     ),
+                      //   ),
+                      //   onTap: () async {
+                      //     //final isValid = _formKey.currentState!.validate();
                                
-                            String? userType = await getUserTypeFromDatabase(uid!);
-                            print(userType);
-                            if (userType == 'Nonprofit Organization') {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NPProfilePage()));
-                            } else if (userType == 'Individual Donor') {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DonorProfilePage()));
-                            } else if (userType == 'Company') {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CompanyProfilePage()));
-                            }
-                        },
-                      ),
+                      //       String? userType = await getUserTypeFromDatabase(uid!);
+                      //       print(userType);
+                      //       if (userType == 'Nonprofit Organization') {
+                      //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NPProfilePage()));
+                      //       } else if (userType == 'Individual Donor') {
+                      //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DonorProfilePage()));
+                      //       } else if (userType == 'Company') {
+                      //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CompanyProfilePage()));
+                      //       }
+                      //   },
+                      // ),
                       ListTile(
                         title: Text(
                           'My Profile',
@@ -693,27 +695,27 @@ class DonorEndDrawer extends StatelessWidget {
                     collapsedIconColor: Colors.white,
                     trailing: Icon(Icons.expand_more, color: Colors.white), 
                     children: [
-                      ListTile(
-                        title: Text(
-                          'Edit Profile',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        onTap: () {
-                          final isValid = _formKey.currentState!.validate();
+                      // ListTile(
+                      //   title: Text(
+                      //     'Edit Profile',
+                      //     style: GoogleFonts.oswald(
+                      //       color: Colors.white,
+                      //       fontSize: 18,
+                      //     ),
+                      //   ),
+                      //   onTap: () {
+                      //     final isValid = _formKey.currentState!.validate();
                                
-                            String? userType = getUserTypeFromDatabase(uid!) as String?;
-                            if (userType == 'Nonprofit Organization') {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NPProfilePage()));
-                            } else if (userType == 'Individual Donor') {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DonorProfilePage()));
-                            } else if (userType == 'Company') {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CompanyProfilePage()));
-                            }
-                        },
-                      ),
+                      //       String? userType = getUserTypeFromDatabase(uid!) as String?;
+                      //       if (userType == 'Nonprofit Organization') {
+                      //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NPProfilePage()));
+                      //       } else if (userType == 'Individual Donor') {
+                      //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DonorProfilePage()));
+                      //       } else if (userType == 'Company') {
+                      //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CompanyProfilePage()));
+                      //       }
+                      //   },
+                      // ),
                       ListTile(
                         title: Text(
                           'My Profile',
