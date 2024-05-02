@@ -1,13 +1,13 @@
+//this page allows donors/companies to sign up for events created by non-profits
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:givehub/webcomponents/donor_company_topbar.dart';
-import 'package:givehub/webcomponents/usertopbar.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:givehub/authentication/auth.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../webcomponents/donor_company_topbar.dart';
+import '../../webcomponents/usertopbar.dart';
 import 'currentevents.dart';
-
-
-
 
 class EventSignUpPage extends StatefulWidget {
 
@@ -17,8 +17,8 @@ class EventSignUpPage extends StatefulWidget {
 
 class _EventSignUpPageState extends State<EventSignUpPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-   final TextEditingController fullNameController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController dateAvailableController = TextEditingController();
@@ -28,106 +28,179 @@ class _EventSignUpPageState extends State<EventSignUpPage> {
   final  TextEditingController orgNameController = TextEditingController();
   bool optSubOut = false;
   DateTime selectedDate = DateTime.now();
-TimeOfDay selectedTime = TimeOfDay.now();
+  TimeOfDay selectedTime = TimeOfDay.now();
+  final DatabaseReference _database = FirebaseDatabase.instance.reference();
 
 
  void createNotification({
-  required String userId, // Assuming you have the userId
-  // required String type,
-  // required String detail,
-  required String orgName,
-  required String eventName
-}) {
-  try { 
-    final notificationsRef = FirebaseDatabase.instance.reference().child('notifications');
-    
-    final notificationData = {
-      'type': 'event registration',
-      'detail': 'You have registered for $eventName',
-      'orgName': orgName,
-      'userId': userId,
-    };
+    required String userId, 
+    required String orgName,
+    required String eventName
+  }) {
+    try { 
+      final notificationsRef = FirebaseDatabase.instance.reference().child('notifications');
+      
+      final notificationData = {
+        'type': 'event registration',
+        'detail': 'You have registered for $eventName',
+        'orgName': orgName,
+        'userId': userId,
+      };
 
-    notificationsRef.push().set(notificationData).then((_) {
-      print('Notification created successfully.');
-    }).catchError((error) {
-      print('Error creating notification: $error');
-    });
-  } catch (e) {
-    print('Error creating notification: $e');
+      notificationsRef.push().set(notificationData).then((_) {
+        print('Notification created successfully.');
+      }).catchError((error) {
+        print('Error creating notification: $error');
+      });
+    } catch (e) {
+      print('Error creating notification: $e');
+    }
   }
-}
-Future<void> _selectDate(BuildContext context) async {
-  final DateTime? pickedDate = await showDatePicker(
-    context: context,
-    initialDate: selectedDate,
-    firstDate: DateTime.now(),
-    lastDate: DateTime(2101),
-  );
-
-  if (pickedDate != null && pickedDate != selectedDate)
-    setState(() {
-      selectedDate = pickedDate;
-    });
-}
-
-Future<void> _selectTime(BuildContext context) async {
-  final TimeOfDay? pickedTime = await showTimePicker(
-    context: context,
-    initialTime: selectedTime,
-  );
-
-  if (pickedTime != null && pickedTime != selectedTime)
-    setState(() {
-      selectedTime = pickedTime;
-    });
-}
-
-void submitForm(BuildContext context, String orgName, String eventName) {
-  //if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-    // Form is valid, call registerEvent function
-    userRegisterEvent(
-      context,
-      fullNameController.text,
-      emailController.text,
-      phoneNumberController.text,
-      dateAvailableController.text,
-      timeAvailableController.text,
-      eventName,
-      orgName,
-      optSubOut
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
     );
-    
-    // After submitting the form, show a success dialog
+
+    if (pickedDate != null && pickedDate != selectedDate)
+      setState(() {
+        selectedDate = pickedDate;
+      });
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+    );
+
+    if (pickedTime != null && pickedTime != selectedTime)
+      setState(() {
+        selectedTime = pickedTime;
+      });
+  }
+
+  void submitForm(BuildContext context, String orgName, String eventName) {
+   
+      userRegisterEvent(
+        context,
+        fullNameController.text,
+        emailController.text,
+        phoneNumberController.text,
+        dateAvailableController.text,
+        timeAvailableController.text,
+        eventName,
+        orgName,
+        optSubOut
+      );
+      createSubscriptionAndPutInDatabase(name: orgName, email: emailController.text, eventName: eventName);
+      
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+           
+            backgroundColor: Color(0xFFFF3B3F).withOpacity(1),
+            content: Text(
+              'You have successfully registered for the event!',
+              style: GoogleFonts.oswald(
+                fontSize: 30,
+                color: Colors.white,
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); 
+                },
+                child: Text('OK', style: GoogleFonts.oswald(
+                fontSize: 20,
+                color: Colors.white,
+              ),),
+              ),
+            ],
+          );
+        },
+      );
+  }
+  void createSubscriptionAndPutInDatabase({
+    required String name,
+    required String email,
+    required String eventName
+  }) {
+    final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (currentUserUid != null) {
+      final updateSubData = {
+        'orgName': name,
+        'orgEmail': email,
+        'type': 'event subscription',
+        'userId': uid,
+       
+      };
+
+     
+      final subscriptionsRef = _database.child('subscriptions');
+
+      
+      final subscriptionRef = subscriptionsRef.push();
+
+      
+      subscriptionRef.set(updateSubData)
+        .then((_) {
+          print('Subscription added successfully.');
+
+          
+          createNotification(userId: currentUserUid, orgName: name, eventName: eventName);
+        })
+        .catchError((error) {
+          print('Error adding subscription: $error');
+        });
+    }
+  }
+  void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          //title: Text('Success'),
-          backgroundColor: Color(0xFFFF3B3F).withOpacity(1),
-          content: Text(
-            'You have successfully registered for the event!',
+          title: Text(
+            'Logged Out Successfully',
             style: GoogleFonts.oswald(
+              color: Color(0x555555).withOpacity(1), 
+              fontWeight: FontWeight.bold,
               fontSize: 30,
-              color: Colors.white,
             ),
           ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+              
+                signOut().then((_) {
+                  
+                  Navigator.pushNamed(context, '/welcome');
+                });
               },
-              child: Text('OK', style: GoogleFonts.oswald(
-              fontSize: 20,
-              color: Colors.white,
-            ),),
+              child: Text(
+                'OK',
+                style: GoogleFonts.oswald(
+                  color: Color(0x555555).withOpacity(1), 
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
             ),
           ],
         );
       },
     );
-  //}
-}
+  }
+
+  void _handleLogout(BuildContext context) {
+    _showLogoutDialog(context);
+  }
+
    @override
   Widget build(BuildContext context) {
     final EventSp chosen = ModalRoute.of(context)!.settings.arguments as EventSp;
@@ -139,7 +212,7 @@ void submitForm(BuildContext context, String orgName, String eventName) {
         home: Scaffold(
           key: _scaffoldKey,
           appBar: UserTopBar(),
-          endDrawer: DonorComTopBar(),
+      endDrawer: DonorComTopBar(),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
@@ -148,7 +221,7 @@ void submitForm(BuildContext context, String orgName, String eventName) {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  chosen.getEventName() + ' Overview',
+                  chosen.getEventName() + ' overview',
                   style: GoogleFonts.oswald(
                     color: const Color(0x555555).withOpacity(1),
                     fontSize: 30,
@@ -459,13 +532,13 @@ void submitForm(BuildContext context, String orgName, String eventName) {
                                                   return Theme(
                                                     data: Theme.of(context).copyWith(
                                                       colorScheme: ColorScheme.light(
-                                                        primary: Color(0xFF4549).withOpacity(1), // header background color
-                                                        onPrimary: Color(0x555555).withOpacity(1), // header text color
-                                                        onSurface: Color(0x555555).withOpacity(1), // body text color
+                                                        primary: Color(0xFF4549).withOpacity(1), 
+                                                        onPrimary: Color(0x555555).withOpacity(1),
+                                                        onSurface: Color(0x555555).withOpacity(1), 
                                                       ),
                                                       textButtonTheme: TextButtonThemeData(
                                                         style: TextButton.styleFrom(
-                                                          foregroundColor: Color(0x555555).withOpacity(1), // button text color
+                                                          foregroundColor: Color(0x555555).withOpacity(1), 
                                                         ),
                                                       ),
                                                     ),
@@ -482,7 +555,7 @@ void submitForm(BuildContext context, String orgName, String eventName) {
                                             decoration: InputDecoration(
                                               filled: true,
                                               fillColor: const Color(0xD9D9D9).withOpacity(1),
-                                              hintText: 'Date',
+                                              hintText: 'Date Available',
                                               hintStyle: GoogleFonts.kreon(
                                                 color: const Color(0xA9A9A9).withOpacity(1),
                                                 fontSize: 15,
@@ -490,11 +563,11 @@ void submitForm(BuildContext context, String orgName, String eventName) {
                                               ),
                                               contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                                               border: OutlineInputBorder(
-                                                //borderRadius: BorderRadius.circular(25),
+                                                
                                                 borderSide: BorderSide.none,
                                               ),
                                               focusedBorder: OutlineInputBorder(
-                                                //borderRadius: BorderRadius.circular(25),
+                                               
                                                 borderSide: BorderSide(color: const Color(0xAAD1DA).withOpacity(1), width: 2),
                                               ),
                                             ),
@@ -526,13 +599,13 @@ void submitForm(BuildContext context, String orgName, String eventName) {
                                                   return Theme(
                                                     data: Theme.of(context).copyWith(
                                                       colorScheme: ColorScheme.light(
-                                                        primary: Color(0xFF4549).withOpacity(1), // header background color
-                                                        onPrimary: Color(0x555555).withOpacity(1), // header text color
-                                                        onSurface: Color(0x555555).withOpacity(1), // body text color
+                                                        primary: Color(0xFF4549).withOpacity(1), 
+                                                        onPrimary: Color(0x555555).withOpacity(1), 
+                                                        onSurface: Color(0x555555).withOpacity(1), 
                                                       ),
                                                       textButtonTheme: TextButtonThemeData(
                                                         style: TextButton.styleFrom(
-                                                          foregroundColor: Color(0x555555).withOpacity(1), // button text color
+                                                          foregroundColor: Color(0x555555).withOpacity(1), 
                                                         ),
                                                       ),
                                                     ),
@@ -559,7 +632,7 @@ void submitForm(BuildContext context, String orgName, String eventName) {
                                           decoration: InputDecoration(
                                             filled: true,
                                             fillColor: const Color(0xD9D9D9).withOpacity(1),
-                                            hintText: 'Time',
+                                            hintText: 'Time Available',
                                             hintStyle: GoogleFonts.kreon(
                                               color: const Color(0xA9A9A9).withOpacity(1),
                                               fontSize: 15,
@@ -567,7 +640,6 @@ void submitForm(BuildContext context, String orgName, String eventName) {
                                             ),
                                             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                                             border: OutlineInputBorder(
-                                              //borderRadius: BorderRadius.circular(25),
                                               borderSide: BorderSide.none,
                                             ),
                                             focusedBorder: OutlineInputBorder(
@@ -676,6 +748,5 @@ void submitForm(BuildContext context, String orgName, String eventName) {
                     ),
                   ),
         ), ), ), );
-            
   }
 }

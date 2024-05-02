@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:givehub/webcomponents/topbar.dart';
+import 'package:givehub/webpages/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AboutUsPage extends StatefulWidget {
@@ -139,7 +140,8 @@ class _AboutUsPage extends State<AboutUsPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/signup');
+                      Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const SignUp()));
                     },
                     child: Text(
                       '  Get Started Today >>',

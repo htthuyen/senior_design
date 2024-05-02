@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:givehub/webcomponents/topbar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContactUsPage extends StatefulWidget {
   @override
@@ -81,19 +82,21 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                 ),
                                 
                               ),
-                              Text(
-                                '800 W Campbell Rd, Richardson, TX 75080',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.oswald(
-                                  color: const Color(0x555555).withOpacity(1),
-                                  fontSize: buttonFontSize,
+                              TextButton(
+                                  onPressed: () { 
+                                    launchUrl('https://maps.app.goo.gl/i97YxaotmmcFXJCi7' as Uri);
+                                  },
+                                  child: Text(
+                                  '800 W Campbell Rd, Richardson, TX 75080',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.oswald(
+                                    color: const Color(0x555555).withOpacity(1),
+                                    fontSize: buttonFontSize,
+                                  ),
                                 ),
                               ),
-
                               ],
                             ),
-
-
                           ),
                         ),
                       ),
@@ -120,13 +123,23 @@ class _ContactUsPageState extends State<ContactUsPage> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                               Text(
-                                'Email Us:',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.oswald(
-                                  color: const Color(0x555555).withOpacity(1),
-                                  fontSize: buttonFontSize,
-                                  fontWeight: FontWeight.bold                          
+                               TextButton(
+                                  onPressed: () { 
+                                    final Uri emailLaunchUri = Uri(
+                                        scheme: 'mailto',
+                                        path: 'GiveHub@gmail.com',
+                                      );
+
+                                      launchUrl(emailLaunchUri);
+                                  },
+                                  child: Text(
+                                  'Email Us:',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.oswald(
+                                    color: const Color(0x555555).withOpacity(1),
+                                    fontSize: buttonFontSize,
+                                    fontWeight: FontWeight.bold                          
+                                  ),
                                 ),
                                 
                               ),
@@ -138,12 +151,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                   fontSize: buttonFontSize,
                                 ),
                               ),
-
                               ],
                             ),
-
-
-
                           ),
                         ),
                         ),        

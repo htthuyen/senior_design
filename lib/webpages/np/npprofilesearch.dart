@@ -5,10 +5,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:givehub/webcomponents/np_topbar.dart';
 import 'package:givehub/webcomponents/usertopbar.dart';
+import 'package:givehub/webpages/allevents.dart';
 import 'package:givehub/webpages/np/grantstatus.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../authentication/auth.dart';
 import '../../webcomponents/profilepicture.dart';
+import '../allevents.dart';
 import '../company_donor/donorcompanydonationhistory.dart';
 import '../search.dart';
 import 'createevent.dart';
@@ -427,7 +429,7 @@ class _NPProfileSearchPageState extends State<NPProfileSearchPage> {
                           onPressed: () {
                            Navigator.push(context, new MaterialPageRoute(
                             builder: (context) =>
-                            GrantStatusPage())
+                            AllEventsPage(userId: widget.userId))
                           );
                           },
                         ),

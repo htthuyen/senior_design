@@ -11,11 +11,15 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../authentication/auth.dart';
 import '../webpages/company_donor/donorcompanydonationhistory.dart';
+import '../webpages/notificationspage.dart';
 import '../webpages/np/createevent.dart';
 import '../webpages/np/eventnp.dart';
 import '../webpages/np/grantapp.dart';
+import '../webpages/np/myapps.dart';
 import '../webpages/np/needs.dart';
+import '../webpages/np/npdonationhistory.dart';
 import '../webpages/np/npdonationreview.dart';
+import '../webpages/subscription.dart';
 
 class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
   @override
@@ -127,7 +131,7 @@ class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
                         onTap: () {
                           Navigator.push(context, new MaterialPageRoute(
                             builder: (context) =>
-                            DonationHistoryDonorCompany())
+                            NPHistory())
                           );
                         },
                       ),
@@ -161,7 +165,7 @@ class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       ListTile(
                         title: Text(
-                          'Your Events',
+                          'My Events',
                           style: GoogleFonts.oswald(
                             color: Colors.white,
                             fontSize: 18,
@@ -219,7 +223,22 @@ class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       ListTile(
                         title: Text(
-                          'Application Status',
+                          'My Applications',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                           Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                            MyApps())
+                          );
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'My Applications Status',
                           style: GoogleFonts.oswald(
                             color: Colors.white,
                             fontSize: 18,
@@ -243,7 +262,10 @@ class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     onTap: () {
-                     Navigator.pushNamed(context, '/notifications');
+                     Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                            NotificationsPage())
+                          );
                     },
                   ),
                   ListTile(
@@ -255,7 +277,9 @@ class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     onTap: () {
-                      
+                      Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                            SubscriptionPage()));
                     },
                   ),
                   ListTile(
@@ -429,7 +453,30 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
                 ),
                 TextButton(
                   onPressed: () {
-                    
+                    if (
+                        nameController.text.isEmpty || emailController.text.isEmpty ||
+                        phoneController.text.isEmpty ||
+                        memberSinceController.text.isEmpty ||
+                        companyInfoController.text.isEmpty) {
+                      // Show dialog if any field is empty
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: const Color(0xFFFF3B3F).withOpacity(1),
+                            title: Text('Please Fill in All Fields', style: GoogleFonts.oswald(fontSize: 30, color: Colors.white)),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
                     _updateProfile(
                       newName: nameController.text,
                       newEmail: 'new@example.com',
@@ -441,6 +488,7 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
                     );
 
                     Navigator.of(context).pop();
+                    }
                   },
                   child: Text(
                     'Save',
