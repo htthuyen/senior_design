@@ -127,7 +127,7 @@ class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
                         onTap: () {
                           Navigator.push(context, new MaterialPageRoute(
                             builder: (context) =>
-                            DonationHistoryDonorCompany())
+                            NPHistory())
                           );
                         },
                       ),
@@ -243,7 +243,10 @@ class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     onTap: () {
-                     Navigator.pushNamed(context, '/notifications');
+                     Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                            NotificationsPage())
+                          );
                     },
                   ),
                   ListTile(
