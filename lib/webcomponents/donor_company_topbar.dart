@@ -13,7 +13,9 @@ import '../webpages/company_donor/eventhistory.dart';
 import '../webpages/company_donor/eventsignuppage.dart';
 import '../webpages/company_donor/grantcreationpage.dart';
 import '../webpages/company_donor/myeventspage.dart';
+import '../webpages/company_donor/mygrants.dart';
 import '../webpages/company_donor/nonmondon.dart';
+import '../webpages/company_donor/npselectionpage.dart';
 import '../webpages/notificationspage.dart';
 import '../webpages/np/grantapp.dart';
 import '../webpages/subscription.dart';
@@ -220,38 +222,54 @@ class DonorComTopBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   collapsedIconColor: Colors.white,
                   trailing: Icon(Icons.expand_more, color: Colors.white), 
-                  children: [
-                    ListTile(
-                      title: Text(
-                        'Create Grant',
-                        style: GoogleFonts.oswald(
-                          color: Colors.white,
-                          fontSize: 18,
+                 children: [
+                      ListTile(
+                        title: Text(
+                          'Create Grant',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
                         ),
+                        onTap: () {
+                           Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                            GrantCreationPage())
+                          );
+                        },
                       ),
-                      onTap: () {
-                         Navigator.push(context, new MaterialPageRoute(
-                          builder: (context) =>
-                          GrantCreationPage())
-                        );
-                      },
-                    ),
-                    ListTile(
-                      title: Text(
-                        'Your Grants',
-                        style: GoogleFonts.oswald(
-                          color: Colors.white,
-                          fontSize: 18,
+    
+                      ListTile(
+                        title: Text(
+                          'My Grants',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
                         ),
+                        onTap: () {
+                          Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                            MyGrants())
+                          );
+                        },
                       ),
-                      onTap: () {
-                        Navigator.push(context, new MaterialPageRoute(
-                          builder: (context) =>
-                          GrantApp())
-                        );
-                      },
-                    ),
-                  ],
+                      ListTile(
+                        title: Text(
+                          'View Applications',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                           Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                            NPSelectionPage())
+                          );
+                        },
+                      ),
+                    ],
                 ),
                 ListTile(
                   title: Text(
