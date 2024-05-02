@@ -66,6 +66,11 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
     getUser();
     _loadSelectedInterests();
   }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadSelectedInterests();
+  }
 
   Future<void> _loadSelectedInterests() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
