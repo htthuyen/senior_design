@@ -22,12 +22,13 @@ class UserTopBar extends StatelessWidget implements PreferredSizeWidget {
             Navigator.push(
                   context,
                   new MaterialPageRoute(
-                      builder: (context) => new WelcomePage()));
+                      builder: (context) => WelcomePage()));
           },
           child: Text(
             'GiveHub',
             style: GoogleFonts.oswald(
               fontSize: 30,
+              color: Colors.white,
             ),
           ),
         ),
@@ -39,7 +40,7 @@ class UserTopBar extends StatelessWidget implements PreferredSizeWidget {
               Navigator.push(
                   context,
                   new MaterialPageRoute(
-                      builder: (context) => new SearchPage()));
+                      builder: (context) => SearchPage()));
             },
             icon: Icon(Icons.search, color: Colors.white),
           ),
