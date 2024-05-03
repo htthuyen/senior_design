@@ -1,9 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:givehub/webcomponents/donor_company_topbar.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'auth.dart';
+
+import '../authentication/auth.dart';
+import '../webcomponents/np_topbar.dart';
+import '../webcomponents/usertopbar.dart';
 
 class SubscriptionPage extends StatefulWidget {
   const SubscriptionPage({super.key});
@@ -33,7 +36,7 @@ class User {
 class _SubscriptionPage extends State<SubscriptionPage> {
   List<User> _subscriptions = [];
   final DatabaseReference _database = FirebaseDatabase.instance.reference();
-
+  String? userType;
   @override
   void initState() {
     super.initState();
@@ -42,6 +45,7 @@ class _SubscriptionPage extends State<SubscriptionPage> {
         if (uid != null) {
           //getGrantsFromDatabase(uid!); 
           getUsersFromDatabase();
+          getUserTypeFromDatabase(uid!);
         } else {
           showSnackBar(context, 'User ID not found. Please log in again.');
           Navigator.pushReplacementNamed(context, '/login'); 
@@ -153,6 +157,7 @@ void createNotification({
       home: Scaffold(
         //the top portion of the webpage
         appBar: UserTopBar(),
+        endDrawer: (userType?.toLowerCase() == 'nonprofit organization') ? NpTopBar() : DonorComTopBar(),
         body: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
