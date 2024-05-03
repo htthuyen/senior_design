@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:givehub/webcomponents/input_theme.dart';
 import 'package:givehub/webcomponents/validation.dart';
 import 'package:givehub/authentication/auth.dart';
+import 'donorcompanydonationhistory.dart';
 
 
 class DonorPaymentPage extends StatefulWidget{
@@ -333,6 +334,9 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
                                         TextButton(
                                           onPressed: () {
                                             Navigator.of(context).pop();
+                                            Navigator.push(context, MaterialPageRoute(
+                                              builder: (context) =>
+                                              DonationHistoryDonorCompany()));
                                           },
                                           child: const Text(
                                             'Close'
