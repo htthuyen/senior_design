@@ -10,13 +10,7 @@ class UserTopBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     //this section
     return AppBar(
-      leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          color: Colors.white,
-        ),
+      leading: null,
         title: GestureDetector(
           onTap: () {
             Navigator.push(
