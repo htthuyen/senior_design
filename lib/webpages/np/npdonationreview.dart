@@ -79,8 +79,8 @@ class _NPDonationReview extends State<NPDonationReview> {
     if (uid!=null) {
       setState(() async {
         donations.remove(donation);
-        createNotificationS(userId: uid!, orgName: recipient, decision: decision);
         final String? sendId = await getUserID(sender);
+        createNotificationS(userId: uid!, orgName: sender, decision: decision);
         createNotification(userId: sendId!, orgName: recipient, decision: decision);
       });
 
@@ -97,12 +97,14 @@ class _NPDonationReview extends State<NPDonationReview> {
     }
   }
   // when Cancel button is press
-  void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient){
+  void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient, String sender){
     String decision = "rejected";
     if (uid != null){
-      setState(() {
+      setState(() async {
         donations.remove(donation);
-        createNotification(userId: uid!, orgName: recipient, decision: decision);
+        final String? sendId = await getUserID(sender);
+        createNotificationS(userId: uid!, orgName: sender, decision: decision);
+        createNotification(userId: sendId!, orgName: recipient, decision: decision);
       });
       //remove the donation from the pending_donation
       DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
@@ -292,7 +294,7 @@ void createNotificationS({
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              unacceptedDonation(donation, donation['recipient']);
+                              unacceptedDonation(donation, donation['recipient'], donation['sender']);
                             },
                           style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFD9D9D9),
