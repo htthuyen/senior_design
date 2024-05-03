@@ -14,16 +14,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: backgroundColor,
       elevation: 0,
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back),
-        onPressed: () {
-          Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                      builder: (context) => WelcomePage()));
-        },
-        color: Colors.white, // Change the color here
-      ),
+      leading: automaticallyImplyLeading: false,
       actions: [
         //padding can be used to help add space or move items
         Padding(
