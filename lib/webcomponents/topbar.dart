@@ -14,7 +14,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: backgroundColor,
       elevation: 0,
-      leading: automaticallyImplyLeading: false,
+      leading: null,
       actions: [
         //padding can be used to help add space or move items
         Padding(
