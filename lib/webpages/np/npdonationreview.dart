@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:givehub/webcomponents/np_topbar.dart';
 import 'package:givehub/webcomponents/usertopbar.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../../authentication/auth.dart';
 
 class NPDonationReview extends StatefulWidget {
@@ -74,7 +75,7 @@ class _NPDonationReview extends State<NPDonationReview> {
   }
 
  //  when Accept button is pressed
-  void acceptedDonation(Map<dynamic,dynamic> donation, String recipient){
+  void acceptedDonation(Map<dynamic,dynamic> donation, /*String recipient*/){
 
             // Generate a unique ID for the accepted donation
     String donationId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -88,18 +89,18 @@ class _NPDonationReview extends State<NPDonationReview> {
    
       // save the accepted donation  to the accpeted_donation database of non-profit
       DatabaseReference ref = FirebaseDatabase.instance.ref('accepted_donations').push();
-      createNotification(userId: uid!, orgName: recipient, decision: 'accepted');
+      //createNotification(userId: uid!, orgName: recipient, decision: 'accepted');
       ref.set(donation);
 
-      //remove the donation from the pending_donation
-      DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
-      createNotification(userId: uid!, orgName: recipient, decision: 'rejected');
-      ref1.child(donation['pendingDonationID']).remove();
+      // //remove the donation from the pending_donation
+      // DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
+      // createNotification(userId: uid!, orgName: recipient, decision: 'rejected');
+      // ref1.child(donation['pendingDonationID']).remove();
 
     }
   }
   // when Cancel button is press
-  void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient){
+  void unacceptedDonation(Map<dynamic, dynamic> donation, /*String recipient*/){
     
     if (uid != null){
       setState(() {

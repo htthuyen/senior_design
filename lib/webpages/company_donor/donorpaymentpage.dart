@@ -35,8 +35,8 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
 
 
   //write data to the database
-void writeDonation() async {
-  try {
+  void writeDonation() async {
+    try {
     await getUser();
     final String? currentUserUid = uid;
     String? sender = name.text;
@@ -47,28 +47,30 @@ void writeDonation() async {
     String? date = dateCtl.text;
     String? receiverEmail = recipientEmail.text;
 
-    // pending donation for donor/company
-    if (uid != null) {
-      DatabaseReference ref = FirebaseDatabase.instance.ref('pending_donations').push();
-      createNotification(userId: uid!, recipient: recipient.text, recipientEmail: recipientEmail.text);
-      await ref.set({
-        'recipient': receiver,
-        'recipientEmail': receiverEmail,
-        'amount': money,
-        'date': date,
-        'sender': sender,
-        'company': companyName,
-        'senderEmail': emailSender,
-        'donorcomID': uid,
-      });
+        
 
-      final String? recipientNotId = await getUserID(receiver);
-      createNotificationS(userId: recipientNotId!, sender: sender, recipient: recipient.text, recipientEmail: recipientEmail.text);
+    // pending donation for donor/company
+    if (uid != null){
+        
+        DatabaseReference ref = FirebaseDatabase.instance.ref('pending_donations').push();
+          
+            await ref.set({
+                'recipient': receiver,
+                'recipientEmail': receiverEmail,
+                'amount': money,
+                'date': date,
+                'sender': sender,
+                'company': companyName,
+                'senderEmail': emailSender,
+                'donorcomID': uid,
+            });
+            createNotification(userId: uid!, recipient: recipient.text, recipientEmail: recipientEmail.text);
+            final String? recipientNotId = await getUserID(receiver);
+            createNotificationS(userId: recipientNotId!, sender: sender, recipient: recipient.text, recipientEmail: recipientEmail.text);
     }
-  } catch (error) {
+  } catch (error){
     print('$error');
   }
-}
 
 
   }
