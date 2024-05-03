@@ -82,29 +82,28 @@ class _NPDonationReview extends State<NPDonationReview> {
     if (uid!=null) {
       setState(() {
         donations.remove(donation);
-        
+        createNotification(userId: uid!, orgName: recipient, decision: decision);
       });
 
    
       // save the accepted donation  to the accpeted_donation database of non-profit
       DatabaseReference ref = FirebaseDatabase.instance.ref('accepted_donations').push();
-      createNotification(userId: uid!, orgName: recipient, decision: 'accepted');
+      
       ref.set(donation);
 
       //remove the donation from the pending_donation
       DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
-      createNotification(userId: uid!, orgName: recipient, decision: 'rejected');
       ref1.child(donation['pendingDonationID']).remove();
 
     }
   }
   // when Cancel button is press
   void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient){
-    
+    String decision = "rejected";
     if (uid != null){
       setState(() {
         donations.remove(donation);
-       ;
+        createNotification(userId: uid!, orgName: recipient, decision: decision);
       });
       //remove the donation from the pending_donation
       DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
