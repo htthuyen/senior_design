@@ -11,6 +11,7 @@ import 'package:group_button/group_button.dart';
 import '../../authentication/auth.dart';
 import '../../webcomponents/input_theme.dart';
 import '../../webcomponents/validation.dart';
+import 'donorcompanydonationhistory.dart';
 
 class NonMonDon extends StatefulWidget {
   @override
@@ -621,6 +622,9 @@ class _NonMonDonState extends State<NonMonDon> {
                                                           TextButton(
                                                             onPressed: () {
                                                             Navigator.of(context).pop();
+                                                            Navigator.push(context, MaterialPageRoute(
+                                                              builder: (context) =>
+                                                              DonationHistoryDonorCompany()));
                                                             },
                                                             child: Text(
                                                               'Close',
