@@ -41,11 +41,11 @@ class _SubscriptionPage extends State<SubscriptionPage> {
   void initState() {
     super.initState();
     getUsersFromDatabase();
-      getUser().then((_) {
+      getUser().then((_) async {
         if (uid != null) {
           //getGrantsFromDatabase(uid!); 
           getUsersFromDatabase();
-          getUserTypeFromDatabase(uid!);
+        userType = await getUserTypeFromDatabase(uid!);
         } else {
           showSnackBar(context, 'User ID not found. Please log in again.');
           Navigator.pushReplacementNamed(context, '/login'); 

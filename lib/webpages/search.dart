@@ -50,11 +50,11 @@ class _SearchPage extends State<SearchPage> {
   void initState() {
     //_foundUsers = _allUsers;
     super.initState();
-    getUser().then((_) {
+    getUser().then((_) async {
       if (uid != null) {
         //getGrantsFromDatabase(uid!); 
         getUsersFromDatabase(uid!);
-        getUserTypeFromDatabase(uid!);
+        userType = await getUserTypeFromDatabase(uid!);
       } else {
         showSnackBar(context, 'User ID not found. Please log in again.');
         Navigator.pushReplacementNamed(context, '/login'); 
