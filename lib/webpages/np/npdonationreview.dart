@@ -1,13 +1,11 @@
-
-
-
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'auth.dart';
-import 'np_topbar.dart';
-import 'usertopbar.dart';
+import 'package:givehub/authentication/auth.dart';
+import 'package:givehub/webcomponents/np_topbar.dart';
+
+import '../../webcomponents/usertopbar.dart';
 
 class NPDonationReview extends StatefulWidget {
   const NPDonationReview({super.key});
@@ -72,51 +70,54 @@ class _NPDonationReview extends State<NPDonationReview> {
     }
   }
 
-  void acceptedDonation(Map<dynamic, dynamic> donation, String recipient, String sender) async {
-  String decision = "accepted";
-  if (uid != null) {
-    final String? sendId = await getUserID(sender);
-    createNotificationS(userId: uid!, orgName: sender, decision: decision);
-    createNotification(userId: sendId!, orgName: recipient, decision: decision);
+  //  when Accept button is pressed
+  void acceptedDonation(Map<dynamic,dynamic> donation, String recipient, String sender){
 
-    setState(() {
-      donations.remove(donation);
-    });
+            // Generate a unique ID for the accepted donation
+    String donationId = DateTime.now().millisecondsSinceEpoch.toString();
+    //String decision = "accepted";
+    if (uid!=null) {
+      setState(() async {
+        String decision = "accepted";
+        donations.remove(donation);
+        final String? sendId = await getUserID(sender);
+        createNotificationS(userId: uid!, orgName: sender, decision: decision);
+        createNotification(userId: sendId!, orgName: recipient, decision: decision);
+      });
 
-    // save the accepted donation to the accepted_donation database of non-profit
-    DatabaseReference ref = FirebaseDatabase.instance.ref('accepted_donations').push();
-    ref.set(donation);
+   
+      // save the accepted donation  to the accpeted_donation database of non-profit
+      DatabaseReference ref = FirebaseDatabase.instance.ref('accepted_donations').push();
+      
+      ref.set(donation);
 
-    // remove the donation from the pending_donation
-    DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
-    ref1.child(donation['pendingDonationID']).remove();
+      //remove the donation from the pending_donation
+      DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
+      ref1.child(donation['pendingDonationID']).remove();
+
+    }
   }
-}
+  // when Cancel button is press
+  void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient, String sender){
+    String decision = "rejected";
+    if (uid != null){
+      setState(() async {
+        donations.remove(donation);
+        final String? sendId = await getUserID(sender);
+        createNotificationS(userId: uid!, orgName: sender, decision: decision);
+        createNotification(userId: sendId!, orgName: recipient, decision: decision);
+      });
+      //remove the donation from the pending_donation
+      DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
+      ref1.child(donation['pendingDonationID']).remove();
 
-void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient, String sender) async {
-  String decision = "rejected";
-  if (uid != null) {
-    final String? sendId = await getUserID(sender);
-    createNotificationS(userId: uid!, orgName: sender, decision: decision);
-    createNotification(userId: sendId!, orgName: recipient, decision: decision);
-
-    setState(() {
-      donations.remove(donation);
-    });
-
-    // remove the donation from the pending_donation
-    DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
-    ref1.child(donation['pendingDonationID']).remove();
+    }
   }
-}
-
-
 void createNotification({
   required String userId, // Assuming you have the userId
   // required String type,
   // required String detail,
   required String orgName,
-  required String sender,
   required String decision
 }) {
   try {
@@ -142,7 +143,7 @@ void createNotificationS({
   required String userId, // Assuming you have the userId
   // required String type,
   // required String detail,
-  required String sender,
+  
   required String orgName,
   required String decision
 }) {
@@ -151,7 +152,7 @@ void createNotificationS({
     
     final notificationData = {
       'type': 'donation $decision',
-      'detail': 'You have $decision the donation from $sender',
+      'detail': 'You have $decision the donation from $orgName',
       
       'userId': userId,
     };
@@ -294,6 +295,7 @@ void createNotificationS({
                           ),
                           ElevatedButton(
                             onPressed: () {
+                              unacceptedDonation(donation, donation['recipient'], donation['sender']);
                               unacceptedDonation(donation, donation['recipient'], donation['sender']);
                             },
                           style: ElevatedButton.styleFrom(
