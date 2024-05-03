@@ -339,7 +339,7 @@ class _NPProfilePageState extends State<NPProfilePage> {
                         ),
                         SizedBox(height: 30), 
                         Text(
-                          aboutUs,
+                          'About us: ' + aboutUs,
                           style: GoogleFonts.oswald(fontSize: 28, color:Color(0x555555).withOpacity(1))
                         ),
                         SizedBox(height: 30), 
