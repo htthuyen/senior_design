@@ -189,21 +189,6 @@ class NpTopBar extends StatelessWidget implements PreferredSizeWidget {
                                                 );
                         },
                       ),
-                      ListTile(
-                        title: Text(
-                          'Edit Event',
-                          style: GoogleFonts.oswald(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                        onTap: () {
-                         Navigator.push(context, new MaterialPageRoute(
-                                                builder: (context) =>
-                                                 EventsNP())
-                                                );
-                        },
-                      ),
                     ],
                   ),
                   ExpansionTile(
