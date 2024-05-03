@@ -7,7 +7,7 @@
 ### Ensure all folders under the lib folder are in your IDE, and flutter is downloaded. Use the command: flutter pub get to get all dependencies. Then run the command: flutter run to be able to run the application.
 
 ## Website Navigation
-### Can see the software execution in the deliverable II report to see a step by step execution.
+### Can see the software execution in the deliverable II report to see a step by step execution and how to navigate the website.
 
 ## Test Data:
 ### We have created sample accounts ahead of time to allow the functionalities of our application to be easily seen.
