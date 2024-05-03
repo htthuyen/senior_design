@@ -94,12 +94,11 @@ class _NPDonationReview extends State<NPDonationReview> {
     }
   }
   // when Cancel button is press
-  void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient, String sender){
+  void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient){
     String decision = "rejected";
     if (uid != null){
       setState(() {
         donations.remove(donation);
-        createNotificationS(userId: uid!, orgName: recipient, decision: decision);
         createNotification(userId: uid!, orgName: recipient, decision: decision);
       });
       //remove the donation from the pending_donation
@@ -489,7 +488,7 @@ void createNotificationS({
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              unacceptedDonation(donation, donation['recipient'], donation['sender']));
+                              unacceptedDonation(donation, donation['recipient']);
                             },
                           style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFD9D9D9),
