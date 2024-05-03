@@ -393,6 +393,7 @@ Future<void> userRegisterEvent(
   String phoneNumber,
   String dateAvailable,
   String timeAvailable,
+  String userId,
   String eventName,
   String orgName,
   bool optSubOut
@@ -402,7 +403,7 @@ Future<void> userRegisterEvent(
     
     // Get the unique event ID using the getEventId function
     String? eventId = await getEventId(orgName, eventName);
-
+    print(eventId);
     if (eventId != null) {
       DatabaseReference eventRef = ref.child('events').child(eventId);
       DatabaseReference attendeesRef = eventRef.child('attendees');
@@ -414,6 +415,7 @@ Future<void> userRegisterEvent(
         'phoneNumber': phoneNumber,
         'dateAvailable': dateAvailable,
         'timeAvailable': timeAvailable,
+        'userId': userId,
         'optSubOut': optSubOut
       };
 
@@ -459,7 +461,7 @@ Future<List<EventforUser>?> getUserEventsFromDatabase(String uid) async {
               Map<dynamic, dynamic> attendeesData = eventInfo['attendees'];
               attendeesData.forEach((attendeeKey, attendeeInfo) {
                 // Check if the attendee matches the user's full name
-                if (attendeeInfo['fullName'] == username) {
+                if (attendeeInfo['userId'] == uid) {
                   // Create an EventforUser object and add it to the list
                   EventforUser event = EventforUser(
                     eventName: eventInfo['eventName'] ?? '',
@@ -468,9 +470,10 @@ Future<List<EventforUser>?> getUserEventsFromDatabase(String uid) async {
                     time: eventInfo['time'] ?? '',
                     location: eventInfo['location'] ?? '',
                     contact: eventInfo['contact'] ?? '',
-                    description: eventInfo['eventDescription'] ?? '', 
-                    isOptOut: eventInfo['isOptOut'] ?? '', 
-                    isNotificationFilled: eventInfo['isNotificationFilled'] ?? ''
+                    description: eventInfo['eventDescription'] ?? '',
+                    isNotificationFilled: eventInfo['isNotificationFilled'] != null ? eventInfo['isNotificationFilled'] as bool : false,
+                    isOptOut: eventInfo['isOptOut'] != null ? eventInfo['isOptOut'] as bool : false,
+
                   );
                   userEvents.add(event);
                 }
