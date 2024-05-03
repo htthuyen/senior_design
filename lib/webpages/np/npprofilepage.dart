@@ -46,9 +46,9 @@ class _NPProfilePageState extends State<NPProfilePage> {
         if (event.snapshot.value != null) {
           final data = Map<String, dynamic>.from(event.snapshot.value as dynamic);
           final userEmail = data['email'] as String? ?? '';
-          final userNeeds = data['selectedNeeds'];
-          final userAbout = data['aboutUs'];
-          final userWebsite = data['website'];
+          final userNeeds = data['selectedNeeds'] ?? '';
+          final userAbout = data['aboutUs'] ?? '';
+          final userWebsite = data['website'] ?? '';
           final memberSince = data['memberSince'] as String? ?? ''; // Provide a default value if null
           String userWeAreSeeking = '';
 
