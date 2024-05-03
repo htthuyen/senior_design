@@ -232,21 +232,21 @@ class _DonorProfilePageState extends State<DonorProfilePage> {
                       name,
                       style: GoogleFonts.oswald(fontSize: 30, fontWeight: FontWeight.bold),
                     ),
-                    // SizedBox(height: 30), 
-                    // Text(
-                    //   phone,
-                    //   style: GoogleFonts.oswald(fontSize: 28),
-                    // ),
+                    SizedBox(height: 30), 
+                    Text(
+                      phone,
+                      style: GoogleFonts.oswald(fontSize: 28),
+                    ),
                     SizedBox(height: 30), 
                     Text(
                       email,
                       style: GoogleFonts.oswald(fontSize: 28),
                     ),
-                    // SizedBox(height: 30),
-                    // Text(
-                    //   member,
-                    //   style: GoogleFonts.oswald(fontSize: 28),
-                    // ),
+                    SizedBox(height: 30),
+                    Text(
+                      'Memeber since: $member',
+                      style: GoogleFonts.oswald(fontSize: 28),
+                    ),
                     SizedBox(height: 30), 
                     Text(
                       companyInfo,
