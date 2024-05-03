@@ -75,9 +75,10 @@ class _NPDonationReview extends State<NPDonationReview> {
 
             // Generate a unique ID for the accepted donation
     String donationId = DateTime.now().millisecondsSinceEpoch.toString();
-    String decision = "accepted";
+    //String decision = "accepted";
     if (uid!=null) {
       setState(() async {
+        String decision = "accepted";
         donations.remove(donation);
         createNotificationS(userId: uid!, orgName: recipient, decision: decision);
         final String? sendId = await getUserID(sender);
@@ -97,12 +98,16 @@ class _NPDonationReview extends State<NPDonationReview> {
     }
   }
   // when Cancel button is press
-  void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient){
-    String decision = "rejected";
+  void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient, String sender){
+    //String decision = "rejected";
     if (uid != null){
-      setState(() {
+      setState(() async {
+        String decision = "rejected";
         donations.remove(donation);
-        createNotification(userId: uid!, orgName: recipient, decision: decision);
+        createNotificationS(userId: uid!, orgName: recipient, decision: decision);
+        final String? sendId = await getUserID(sender);
+        //String decision = "rejected";
+        createNotification(userId: sendId!, orgName: recipient, decision: decision);
       });
       //remove the donation from the pending_donation
       DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
@@ -292,7 +297,7 @@ void createNotificationS({
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              unacceptedDonation(donation, donation['recipient']);
+                              unacceptedDonation(donation, donation['recipient'], donation['sender']);
                             },
                           style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFD9D9D9),
