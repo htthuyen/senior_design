@@ -8,6 +8,7 @@ import 'package:givehub/webcomponents/np_topbar.dart';
 import 'package:givehub/webcomponents/usertopbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'auth.dart';
 
 class GrantStatusPage extends StatefulWidget {
   const GrantStatusPage({super.key});
@@ -43,7 +44,7 @@ class _GrantStatusPage extends State<GrantStatusPage> {
   @override
   void initState() {
     super.initState();
-    getGrantsFromDatabase("jAhl9S8Yi0gWsNcAXoSpnwvN2AD2");
+    getGrantsFromDatabase(uid!);
     // getUser().then((_) {
     //   if (uid != null) {
     //     getGrantsFromDatabase(uid!); 
