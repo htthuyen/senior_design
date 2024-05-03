@@ -89,6 +89,14 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
       _database.child('users').child(currentUserUid).update(updateData)
         .then((_) {
           print('User information updated successfully.');
+          setState(() {
+            
+            name = newName;
+            email = newEmail;
+            aboutUs = newAboutUs;
+            website = newWebsite;
+          
+          });
         })
         .catchError((error) {
           print('Error updating user information: $error');
@@ -174,17 +182,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
                           }, 
                           icon: const Icon(Icons.edit),
                         ),
-                        IconButton(
-                          icon: Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite ? Colors.red : null,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              isFavorite = !isFavorite;
-                            });
-                          },
-                        ),
+                        
                         SizedBox(width: 10),
                         IconButton(
                           icon: Icon(Icons.attach_money),
