@@ -255,14 +255,49 @@ void createNotificationS({
                 rows:  
                 donations.map((donation){
                   return DataRow(cells:[
-                    DataCell(Text(donation['date'].toString())),
-                    DataCell(Text(donation['sender'].toString())),
-                    DataCell(Text(donation['senderEmail'].toString())),
+                    DataCell(
+                      Text(
+                        donation['date'].toString(),
+                        style: GoogleFonts.kreon(
+                          color: Color(0x555555).withOpacity(1),
+                          fontSize: 17,
+                        ),
+                      ),
+                    ),
+                    DataCell(
+                      Text(
+                        donation['sender'].toString(),
+                        style: GoogleFonts.kreon(
+                          color: Color(0x555555).withOpacity(1),
+                          fontSize: 17,
+                        ),
+                      ),
+                    ),
+                    DataCell(
+                      Text(
+                        donation['senderEmail'].toString(),
+                        style: GoogleFonts.kreon(
+                          color: Color(0x555555).withOpacity(1),
+                          fontSize: 17,
+                        ),
+                      ),
+                    ),
                     DataCell(
                       donation['amount'] != null
-                       ? Text(donation['amount'].toString()) 
-                       :Text(donation['donationType'].toString())
-                      
+                       ? Text(
+                          donation['amount'].toString(),
+                          style: GoogleFonts.kreon(
+                          color: Color(0x555555).withOpacity(1),
+                          fontSize: 17,
+                        ),
+                      ) 
+                       :Text(
+                          donation['donationType'].toString(),
+                          style: GoogleFonts.kreon(
+                            color: Color(0x555555).withOpacity(1),
+                            fontSize: 17,
+                          ),
+                        ),
                     ),
                     DataCell(
                       Row(
