@@ -50,7 +50,7 @@ void writeDonation() async {
     // pending donation for donor/company
     if (uid != null) {
       DatabaseReference ref = FirebaseDatabase.instance.ref('pending_donations').push();
-      createNotification(userId: uid!, recipient: recipient.text, recipientEmail: recipientEmail.text);
+     
       await ref.set({
         'recipient': receiver,
         'recipientEmail': receiverEmail,
@@ -346,6 +346,7 @@ void writeDonation() async {
                               onPressed: () {
                                 writeDonation();
                                 Navigator.of(context).pop();
+                                createNotification(userId: uid!, recipient: recipient.text, recipientEmail: recipientEmail.text);
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context){
