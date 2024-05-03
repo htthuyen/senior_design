@@ -1,11 +1,9 @@
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:givehub/webcomponents/donor_company_topbar.dart';
-import 'package:givehub/webcomponents/np_topbar.dart';
-import 'package:givehub/webcomponents/usertopbar.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../authentication/auth.dart';
+import 'auth.dart';
 
 class SubscriptionPage extends StatefulWidget {
   const SubscriptionPage({super.key});
@@ -35,18 +33,15 @@ class User {
 class _SubscriptionPage extends State<SubscriptionPage> {
   List<User> _subscriptions = [];
   final DatabaseReference _database = FirebaseDatabase.instance.reference();
-  
-  String? userType;
 
   @override
   void initState() {
     super.initState();
     getUsersFromDatabase();
-      getUser().then((_) async {
+      getUser().then((_) {
         if (uid != null) {
           //getGrantsFromDatabase(uid!); 
           getUsersFromDatabase();
-          userType = await getUserTypeFromDatabase(uid!);
         } else {
           showSnackBar(context, 'User ID not found. Please log in again.');
           Navigator.pushReplacementNamed(context, '/login'); 
@@ -75,42 +70,42 @@ class _SubscriptionPage extends State<SubscriptionPage> {
     }
   }
   Future<List<Map<String, dynamic>>?> fetchUsersFromDatabase() async {
-    final ref = FirebaseDatabase.instance.reference();
+  final ref = FirebaseDatabase.instance.reference();
 
-    try {
-      var snapshot = await ref.child('subscriptions').once();
+  try {
+   
+    var snapshot = await ref.child('subscriptions').orderByChild('userId').equalTo(uid).once();
 
-      if (snapshot.snapshot.value != null) {
-        Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map<dynamic, dynamic>;
+    if (snapshot.snapshot.value != null) {
+      Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map<dynamic, dynamic>;
 
-        if (data != null) {
-          List<Map<String, dynamic>> allUsersList = [];
-          data.forEach((key, userData) {
-            
-            if (userData != null) {
-              String userName = userData['orgName'] ?? '';
-              String userID = userData['userID'] ?? '';
+      if (data != null) {
+        List<Map<String, dynamic>> allUsersList = [];
+        data.forEach((key, userData) {
+          if (userData != null) {
+            String userName = userData['orgName'] ?? '';
+            String userID = userData['userId'] ?? '';
 
-              Map<String, dynamic> allUserData = {
-                'userId': userID,
-                'userName': userName,
-                'isFavorite': true,
-                'subscriptionID': key,
-              };
+            Map<String, dynamic> allUserData = {
+              'userId': userID,
+              'userName': userName,
+              'isFavorite': true,
+              'subscriptionID': key,
+            };
 
-              allUsersList.add(allUserData);
-            }
-          });
-          //print(userId);
-          return allUsersList;
-        }
+            allUsersList.add(allUserData);
+          }
+        });
+        //print(userId);
+        return allUsersList;
       }
-    } catch (e) {
-      print('Error retrieving all users: $e');
     }
-
-    return null; 
+  } catch (e) {
+    print('Error retrieving user subscriptions: $e');
   }
+
+  return null; 
+}
 
     Future<void> deleteSubscriptionFromDatabase(String subscriptionID) async {
     final ref = FirebaseDatabase.instance.reference();
@@ -146,8 +141,6 @@ void createNotification({
         print('Error creating notification: $e');
       }
   }
-
-   
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -159,8 +152,85 @@ void createNotification({
       ),
       home: Scaffold(
         //the top portion of the webpage
-        appBar: UserTopBar(),
-        endDrawer: (userType?.toLowerCase() == 'nonprofit organization') ? NpTopBar() : DonorComTopBar(),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFFFF3B3F),
+          elevation: 0,
+          actions: [
+            //padding can be used to help add space or move items
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  // Handle search button press here
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: TextButton(
+                //control the flow of buttons when pressed
+                onPressed: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                child: Text(
+                  'About Us',
+                  //change change the font, size, color, and bold/thinness
+                  style: GoogleFonts.oswald(
+                    color: Colors.white,
+                    fontSize: 16,
+                    //fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/sign_up_page');
+                },
+                child: Text(
+                  'Sign Up',
+                  style: GoogleFonts.oswald(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                child: Text(
+                  'Login',
+                  style: GoogleFonts.oswald(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+          ],
+          title: Align(
+            alignment: Alignment.topLeft,
+            child: TextButton(
+              onPressed: () {
+                Navigator.popUntil(context, (route) => route.isFirst);
+              },
+              child: Text(
+                'GiveHub',
+                style: GoogleFonts.oswald(
+                  color: Colors.white,
+                  fontSize: 30,
+                ),
+              ),
+            ),
+          ),
+        ),
         body: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
