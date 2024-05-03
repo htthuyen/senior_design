@@ -6,6 +6,10 @@ import 'package:givehub/authentication/auth.dart';
 import 'package:givehub/webcomponents/np_topbar.dart';
 
 import '../../webcomponents/usertopbar.dart';
+import 'package:givehub/authentication/auth.dart';
+import 'package:givehub/webcomponents/np_topbar.dart';
+
+import '../../webcomponents/usertopbar.dart';
 
 class NPDonationReview extends StatefulWidget {
   const NPDonationReview({super.key});
@@ -144,6 +148,7 @@ void createNotificationS({
   // required String type,
   // required String detail,
   
+  
   required String orgName,
   required String decision
 }) {
@@ -152,6 +157,7 @@ void createNotificationS({
     
     final notificationData = {
       'type': 'donation $decision',
+      'detail': 'You have $decision the donation from $orgName',
       'detail': 'You have $decision the donation from $orgName',
       
       'userId': userId,
@@ -295,6 +301,7 @@ void createNotificationS({
                           ),
                           ElevatedButton(
                             onPressed: () {
+                              unacceptedDonation(donation, donation['recipient'], donation['sender']);
                               unacceptedDonation(donation, donation['recipient'], donation['sender']);
                               unacceptedDonation(donation, donation['recipient'], donation['sender']);
                             },
