@@ -73,32 +73,38 @@ class _NPDonationReview extends State<NPDonationReview> {
     }
   }
 
-  //  when Accept button is pressed
-  void acceptedDonation(Map<dynamic,dynamic> donation){
+ //  when Accept button is pressed
+  void acceptedDonation(Map<dynamic,dynamic> donation, String recipient){
 
             // Generate a unique ID for the accepted donation
     String donationId = DateTime.now().millisecondsSinceEpoch.toString();
+    String decision = "accepted";
     if (uid!=null) {
       setState(() {
         donations.remove(donation);
+        
       });
 
    
       // save the accepted donation  to the accpeted_donation database of non-profit
       DatabaseReference ref = FirebaseDatabase.instance.ref('accepted_donations').push();
+      createNotification(userId: uid!, orgName: recipient, decision: 'accepted');
       ref.set(donation);
 
       //remove the donation from the pending_donation
       DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
+      createNotification(userId: uid!, orgName: recipient, decision: 'rejected');
       ref1.child(donation['pendingDonationID']).remove();
 
     }
   }
   // when Cancel button is press
-  void unacceptedDonation(Map<dynamic, dynamic> donation){
+  void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient){
+    
     if (uid != null){
       setState(() {
         donations.remove(donation);
+       ;
       });
       //remove the donation from the pending_donation
       DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
@@ -106,8 +112,6 @@ class _NPDonationReview extends State<NPDonationReview> {
 
     }
   }
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
