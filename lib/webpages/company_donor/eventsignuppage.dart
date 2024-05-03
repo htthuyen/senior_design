@@ -671,7 +671,7 @@ class _EventSignUpPageState extends State<EventSignUpPage> {
                                         createNotification(userId: uid!, orgName: chosen.getOrgName(), eventName: chosen.getEventName());
                                         Navigator.push(context, new MaterialPageRoute(
                                                     builder: (context) =>
-                                                    MyEventsPage()));
+                                                     CurrentEventsPage()));
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.white.withOpacity(1),
