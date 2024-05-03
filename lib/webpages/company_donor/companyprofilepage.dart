@@ -36,7 +36,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
   String member = '';
   String companyInfo = '';
   bool isFavorite = false;
-  late StreamSubscription _stream;
+  StreamSubscription? _stream;
 
   @override
   void initState(){
@@ -45,35 +45,37 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
     getUser(); 
   }
   
-  void getUserInfo() async{
-     final String? currentUserUid = uid; 
-          String? com = await getUserTypeFromDatabase(currentUserUid!);
+   void getUserInfo() async {
+  final String? currentUserUid = uid; 
+  String? np = await getUserTypeFromDatabase(currentUserUid!);
 
-     if (currentUserUid != null && com?.trim().toLowerCase() == 'company') {
-        _stream = _database.child('users').child(currentUserUid).onValue.listen((event) {
-        final data = Map<String, dynamic>.from(event.snapshot.value as dynamic);
-        final userEmail = data['email'] as String? ?? '';
-        final userMembership = data['memberSince'] as String? ?? '';
-        final userName = data['name'] as String? ?? '';
-        final userPhone = data['phoneNumber'] as String? ?? '';
-       
+  if (currentUserUid != null && np?.toLowerCase().trim() == 'company') {
+    _stream = _database.child('users').child(currentUserUid).onValue.listen((event) {
+      final data = Map<String, dynamic>.from(event.snapshot.value as dynamic);
+      final userEmail = data['email'];
+      final userMembership = data['memberSince'];
+      final userName = data['name'];
+      final userPhone = data['phoneNumber'];
+      final userCompanyInfo = data['companyInfo'];
+
       // Pushing data to database
-      setState((){
-        name = '$userName';
-        email = '$userEmail';
-        member = '$userMembership';
-        phone = '$userPhone';
-        companyInfo = '';
-
+      setState(() {
+        name = userName;
+        email = userEmail;
+        member = userMembership;
+        phone = userPhone;
+        companyInfo = userCompanyInfo;
       });
     });
-    }
   }
-  
+}
+
   // Update information in database
   void _updateProfile({
       required String newName,
       required String newEmail,
+      required String newPhone,
+      
       required String newCompanyInfo,
     }) {
     String? currentUserUid = FirebaseAuth.instance.currentUser?.uid;
@@ -83,6 +85,8 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
       Map<String, dynamic> updateData = {
         'name': newName,
         'email': newEmail,
+        'phone': newPhone,
+        
         'companyInfo': newCompanyInfo,
       };
 
@@ -93,6 +97,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
             
             name = newName;
             email = newEmail;
+            phone = newPhone;
             companyInfo = newCompanyInfo;
           
           });
@@ -101,6 +106,110 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
           print('Error updating user information: $error');
         });
     }
+  }
+
+  void _showEditProfileDialog(BuildContext context) {
+    TextEditingController nameController = TextEditingController(text: name);
+    TextEditingController emailController = TextEditingController(text: email);
+    TextEditingController phoneController = TextEditingController(text: phone);
+    TextEditingController memberSinceController = TextEditingController(text: member);
+    TextEditingController companyInfoController = TextEditingController(text: companyInfo);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            width: 800, 
+            height: 600,
+            color: Color(0xCAEBF2).withOpacity(1),
+            child: AlertDialog(
+              backgroundColor: Color(0xCAEBF2).withOpacity(1),
+              title: Text(
+                'Edit Profile',
+                style: GoogleFonts.oswald(
+                  fontSize: 30,
+                ),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(hintText: 'Name'),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: emailController,
+                      decoration: InputDecoration(hintText: 'Email'),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: phoneController,
+                      decoration: InputDecoration(hintText: 'Phone'),
+                    ),
+                    
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: companyInfoController,
+                      decoration: InputDecoration(hintText: 'Company Info'),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (
+                        nameController.text.isEmpty || emailController.text.isEmpty ||
+                        phoneController.text.isEmpty ||
+                        
+                        companyInfoController.text.isEmpty) {
+                      // Show dialog if any field is empty
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: const Color(0xFFFF3B3F).withOpacity(1),
+                            title: Text('Please Fill in All Fields', style: GoogleFonts.oswald(fontSize: 30, color: Colors.white)),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                    _updateProfile(
+                      newName: nameController.text,
+                      newEmail: emailController.text,
+                      newPhone: phoneController.text,
+                     
+                      newCompanyInfo: companyInfoController.text,
+                    );
+
+                    Navigator.of(context).pop();
+                    }
+                  },
+                  child: Text('Save', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -214,92 +323,10 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
     );
   }
 
-  void _showEditProfileDialog(BuildContext context) {
-    TextEditingController nameController = TextEditingController(text: name);
-    TextEditingController emailController = TextEditingController(text: email);
-    //TextEditingController phoneController = TextEditingController(text: phone);
-    //TextEditingController memberSinceController = TextEditingController(text: member);
-    TextEditingController companyInfoController = TextEditingController(text: companyInfo);
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          child: Container(
-            width: 800, 
-            height: 600,
-            color: Color(0xCAEBF2).withOpacity(1),
-            child: AlertDialog(
-              backgroundColor: Color(0xCAEBF2).withOpacity(1),
-              title: Text(
-                'Edit Profile',
-                style: GoogleFonts.oswald(
-                  fontSize: 30,
-                ),
-              ),
-              content: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFormField(
-                      controller: nameController,
-                      decoration: InputDecoration(hintText: 'Name'),
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: emailController,
-                      decoration: InputDecoration(hintText: 'Email'),
-                    ),
-                    const SizedBox(height: 20),
-                    // TextFormField(
-                    //   controller: phoneController,
-                    //   decoration: InputDecoration(labelText: 'Phone'),
-                    // ),
-                    // const SizedBox(height: 20),
-                    // TextFormField(
-                    //   controller: memberSinceController,
-                    //   decoration: InputDecoration(labelText: 'Member Since'),
-                    // ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: companyInfoController,
-                      decoration: InputDecoration(hintText: 'Company Info'),
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Cancel', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
-                ),
-                TextButton(
-                  onPressed: () {
-                    _updateProfile(
-                      newName: nameController.text,
-                      newEmail: emailController.text,
-                      // newPhone: phoneController.text,
-                      // newMember: memberSinceController.text,
-                      newCompanyInfo: companyInfoController.text,
-                    );
-
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Save', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
+  
   @override
   void deactivate(){
-    _stream.cancel();
+   
     super.deactivate();
   }
 }
