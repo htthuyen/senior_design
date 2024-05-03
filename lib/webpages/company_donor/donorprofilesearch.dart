@@ -46,7 +46,7 @@ class _DonorProfileSearchPageState extends State<DonorProfileSearchPage> {
         final userMembership = data['memberSince'] as String? ?? '';
         final userName = data['name'] as String? ?? '';
         final userPhone = data['phoneNumber'] as String? ?? '';
-        //final userCompanyInfo = data['companyInfo'] as String? ?? '';
+        final userCompanyInfo = data['companyInfo'] as String? ?? '';
 
         //final userCompanyInfo = data['companyInfo'] as String;
         
@@ -55,7 +55,7 @@ class _DonorProfileSearchPageState extends State<DonorProfileSearchPage> {
           email = '$userEmail';
           member = '$userMembership';
           phone = '$userPhone';
-          companyInfo = 'Company Info: ';
+          companyInfo = userCompanyInfo;
 
         });
       });
@@ -109,26 +109,26 @@ class _DonorProfileSearchPageState extends State<DonorProfileSearchPage> {
                       children: [
                         Text(
                           name,
-                          style: GoogleFonts.oswald(fontSize: 30, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.oswald(fontSize: 34, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 30), 
                         Text(
-                          phone,
+                          'About: ' + companyInfo,
                           style: GoogleFonts.oswald(fontSize: 28),
                         ),
                         SizedBox(height: 30), 
                         Text(
-                          email,
+                          'Phone: ' + phone,
+                          style: GoogleFonts.oswald(fontSize: 28),
+                        ),
+                        SizedBox(height: 30), 
+                        Text(
+                          'Email: ' + email,
                           style: GoogleFonts.oswald(fontSize: 28),
                         ),
                         SizedBox(height: 30),
                         Text(
-                          member,
-                          style: GoogleFonts.oswald(fontSize: 28),
-                        ),
-                        SizedBox(height: 30), 
-                        Text(
-                          companyInfo,
+                          'Member since: ' + member,
                           style: GoogleFonts.oswald(fontSize: 28),
                         ),
                       ],

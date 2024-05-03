@@ -47,14 +47,15 @@ class _CompanyProfileSearchPageState extends State<CompanyProfileSearchPage> {
         final userMembership = data['memberSince'] as String? ?? '';
         final userName = data['name'] as String? ?? '';
         final userPhone = data['phoneNumber'] as String? ?? '';
+        final userCompanyInfo = data['companyInfo'] ?? '';
        
       // Pushing data to database
       setState((){
-        name = '$userName';
-        email = '$userEmail';
-        member = 'Member Since: ' + '$userMembership';
-        phone = '$userPhone';
-        companyInfo = 'Company Info';
+        name = userName;
+        email = userEmail;
+        member = 'Member Since: ' + userMembership;
+        phone = userPhone;
+        companyInfo = userCompanyInfo;
 
       });
     });
@@ -102,26 +103,26 @@ class _CompanyProfileSearchPageState extends State<CompanyProfileSearchPage> {
                       children: [
                         Text(
                           name,
-                          style: GoogleFonts.oswald(fontSize: 30, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.oswald(fontSize: 34, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 30), 
                         Text(
-                          phone,
+                          'Company Info: ' + companyInfo,
                           style: GoogleFonts.oswald(fontSize: 28),
                         ),
                         SizedBox(height: 30), 
                         Text(
-                          email,
+                          'Phone: ' + phone,
+                          style: GoogleFonts.oswald(fontSize: 28),
+                        ),
+                        SizedBox(height: 30), 
+                        Text(
+                          'Email: ' + email,
                           style: GoogleFonts.oswald(fontSize: 28),
                         ),
                         SizedBox(height: 30),
                         Text(
                           member,
-                          style: GoogleFonts.oswald(fontSize: 28),
-                        ),
-                        SizedBox(height: 30), 
-                        Text(
-                          companyInfo,
                           style: GoogleFonts.oswald(fontSize: 28),
                         ),
                       ],

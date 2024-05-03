@@ -57,6 +57,8 @@ class _NPProfileSearchPageState extends State<NPProfileSearchPage> {
           final userEmail = data['email'] as String? ?? '';
           final userNeeds = data['selectedNeeds'];
           final memberSince = data['memberSince'] as String? ?? ''; // Provide a default value if null
+          final aboutus = data['aboutUs'];
+          final websites = data['website'];
           String userWeAreSeeking = '';
 
           // Convert the "needs" data to a string if it's a list or array
@@ -75,10 +77,10 @@ class _NPProfileSearchPageState extends State<NPProfileSearchPage> {
           setState(() {
             name = userName;
             email = userEmail;
-            aboutUs = 'Give a 10 word description of your non-profit.';
+            aboutUs = aboutus;
             weAreSeeking = 'We are currently seeking: ' + trimmedUserWeAreSeeking;
             member = 'Member since: '+ memberSince;
-            website = 'Website: ';
+            website = websites;
           });
         }
       });
@@ -179,7 +181,7 @@ class _NPProfileSearchPageState extends State<NPProfileSearchPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'Name' , labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
+                      decoration: InputDecoration(hintText: 'Name' , labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
                       style: GoogleFonts.oswald(
                         color: Color(0x555555).withOpacity(1), 
                         fontWeight: FontWeight.bold,
@@ -189,7 +191,7 @@ class _NPProfileSearchPageState extends State<NPProfileSearchPage> {
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'Email', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
+                      decoration: InputDecoration(hintText: 'Email', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
                       style: GoogleFonts.oswald(
                         color: Color(0x555555).withOpacity(1), 
                         fontWeight: FontWeight.bold,
@@ -199,7 +201,7 @@ class _NPProfileSearchPageState extends State<NPProfileSearchPage> {
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'About Us', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100,color: Color(0x555555).withOpacity(1))),
+                      decoration: InputDecoration(hintText: 'About Us', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100,color: Color(0x555555).withOpacity(1))),
                       style: GoogleFonts.oswald(
                         color: Color(0x555555).withOpacity(1), 
                         fontWeight: FontWeight.bold,
@@ -210,7 +212,7 @@ class _NPProfileSearchPageState extends State<NPProfileSearchPage> {
                     
                     const SizedBox(height: 20),
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'Member Since', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100,color: Color(0x555555).withOpacity(1))),
+                      decoration: InputDecoration(hintText: 'Member Since', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100,color: Color(0x555555).withOpacity(1))),
                       style: GoogleFonts.oswald(
                         color: Color(0x555555).withOpacity(1), 
                         fontWeight: FontWeight.bold,
@@ -220,7 +222,7 @@ class _NPProfileSearchPageState extends State<NPProfileSearchPage> {
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'Website', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
+                      decoration: InputDecoration(hintText: 'Website', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
                       style: GoogleFonts.oswald(
                         color: Color(0x555555).withOpacity(1), 
                         fontWeight: FontWeight.bold,
@@ -378,16 +380,16 @@ class _NPProfileSearchPageState extends State<NPProfileSearchPage> {
                       children: [
                         Text(
                           name,
-                          style: GoogleFonts.oswald(fontSize: 30, fontWeight: FontWeight.bold, color:Color(0x555555).withOpacity(1))
+                          style: GoogleFonts.oswald(fontSize: 34, fontWeight: FontWeight.bold, color:Color(0x555555).withOpacity(1))
                         ),
                         SizedBox(height: 30), 
                         Text(
-                          email,
+                          'About: ' + aboutUs,
                           style: GoogleFonts.oswald(fontSize: 28, color:Color(0x555555).withOpacity(1))
                         ),
                         SizedBox(height: 30), 
                         Text(
-                          aboutUs,
+                          'Email: ' + email,
                           style: GoogleFonts.oswald(fontSize: 28, color:Color(0x555555).withOpacity(1))
                         ),
                         SizedBox(height: 30), 
@@ -402,7 +404,7 @@ class _NPProfileSearchPageState extends State<NPProfileSearchPage> {
                         ),
                         SizedBox(height: 30),
                         Text(
-                          website,
+                          'Website: ' + website,
                           style: GoogleFonts.oswald(fontSize: 28, color:Color(0x555555).withOpacity(1))
                         ),
                       ],
