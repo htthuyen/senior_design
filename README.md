@@ -19,7 +19,7 @@
 ### All grants: Displays all of the grants created by that donor/company to non-profits on their profile.
 ### main.dart: Houses all the routes for our webpages, allowing us to connect our webpages.
 ### auth.dart: Contains a majority of our back-end functions: such as validating user, user sign-up, retrieving events for users, etc...
-### Company Profile: The profile page for Companies.
+### Company Profile: The profile page for Companies. It shows their name, contact info, company info field where they can add further description and add a link to their donor website. Companies are able to edit their profile here, go straight to donation history by clicking on the '$' and direct access to their grants by clicking on the paper icon.
 ### Company Profile Search: The company profile search page shows up when a user clicks "view profile" on a company profile in the search page.
 ### Connections: Represents our Recommended Connections page. This page takes the donations of interest data from our Donation of Interests Page completed by donors and companies when they sign up, and links them to nonprofits who have the needs of those interests.
 ### Contact us: The Contact Us Page is to provide our users with our company’s contact info.
@@ -28,7 +28,7 @@
 ### Donation Of Interests: This page is completed by donors and companies when they sign up for an account. This page takes the selected donations that companies and donors are interested in, and then links them to nonprofits who have the needs of those interests vis the Connections page.
 ### Donor Company Donation History: The Donor Company Donation History Page is the public donation history page provided to show the donation history (monetary and non-monetary) for each donor and company.
 ### Donor Payment Page : The Donor Payment Page is the form to let donor/company fill out the monetary donation
-### Donor Profile: The profile page for Donors.
+### Donor Profile: The profile page for Donors shows their name, contact info, company info field where they can add further description and add a link to their donor website. Donors are able to edit their profile here, go straight to donation history by clicking on the '$' and direct access to their grants by clicking on the paper icon.
 ### Donor Profile Search: The donor profile search page shows up when a user clicks "view profile" on a donor profile in the search page. 
 ### Event History : The Event History Page displays the events that donors attended 
 ### Events: The events page is used to format the display for events. 
@@ -48,7 +48,7 @@
 ### Non Monetary donation: The Non Monetary Donation is for donors to submit a form for non monetary donations.
 ### Notifications page: The notifications page provides real time updates to users when someone has applied for grants, accepted grants, made payments, subscribed to profiles, or signed up for events.
 ### Np history: NP history is the private view for nonprofit organizations to view their donation history which includes the donor/company, date, and donation.
-### NP profile page: The Non-Profit Profile Page is the profile page for nonprofits.
+### NP profile page: The Non-Profit Profile Page is the profile page for nonprofits which shows the nonprofits' name, contact info, description, and space for their website. It also includes quick access buttons to edit profile, donation history, and grant application status. 
 ### Np profile search: The NP profile search page shows up when a user clicks "view profile" on a non profit profile in the search page. 
 ### Np selection page: The NP selection page is for donors/companies. It includes a list of their grants and its applicants. When clicking on an applicant, they can view their application and decided to "accept" or "reject" their application.
 ### Public Donation History : This page provides a donation history for other users to be able to look at. It contains less information, allowing other users to see what kind of activity and interests the user has through their history. For donors/companies, it shows the donations they made, while non-profits, it shows the donations they have received.
