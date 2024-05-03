@@ -191,7 +191,7 @@ class _CreateEventState extends State<CreateEvent> {
         endDrawer: NpTopBar(),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.only(left: 75, right: 75, top: 50, bottom: 75),
+            padding: const EdgeInsets.only(left: 75, right: 75, top: 35, bottom: 35),
             child: Form(
               key: _formKey,
               child: Column(
