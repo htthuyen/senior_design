@@ -74,8 +74,8 @@ class _NPDonationReview extends State<NPDonationReview> {
   String decision = "accepted";
   if (uid != null) {
     final String? sendId = await getUserID(sender);
-    createNotificationS(userId: uid!, orgName: sender, decision: decision, sender: sender);
-    createNotification(userId: sendId!, orgName: recipient, decision: decision, sender: sender);
+    createNotificationS(userId: uid!, orgName: sender, decision: decision);
+    createNotification(userId: sendId!, orgName: recipient, decision: decision);
 
     setState(() {
       donations.remove(donation);
@@ -95,8 +95,8 @@ void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient, String
   String decision = "rejected";
   if (uid != null) {
     final String? sendId = await getUserID(sender);
-    createNotificationS(userId: uid!, orgName: sender, decision: decision, sender: sender);
-    createNotification(userId: sendId!, orgName: recipient, decision: decision, sender: sender);
+    createNotificationS(userId: uid!, orgName: sender, decision: decision);
+    createNotification(userId: sendId!, orgName: recipient, decision: decision);
 
     setState(() {
       donations.remove(donation);
