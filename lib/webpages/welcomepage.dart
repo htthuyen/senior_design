@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:givehub/webpages/contactuspage.dart';
+import 'package:givehub/webpages/featurednonprofits.dart';
+import 'package:givehub/webpages/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../webcomponents/topbar.dart';
@@ -54,7 +57,10 @@ class _WelcomePageState extends State<WelcomePage> {
                       Container(
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, '/contactus');
+                             Navigator.push(context, new MaterialPageRoute(
+                builder: (context) =>
+                  ContactUsPage())
+                );
                           },
                           style: ElevatedButton.styleFrom(
                             //button color
@@ -85,7 +91,9 @@ class _WelcomePageState extends State<WelcomePage> {
                       Container(
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, '/featurednp');
+                            Navigator.push(context, new MaterialPageRoute(
+                builder: (context) =>
+                  FeaturedNonProfitPage()));
                             
                           },
                           //color: Color(0x00caebf2),
@@ -116,7 +124,9 @@ class _WelcomePageState extends State<WelcomePage> {
                       Container(
                         child: ElevatedButton(
                           onPressed: () {
-                             Navigator.pushNamed(context, '/signup');
+                             Navigator.push(context, new MaterialPageRoute(
+                builder: (context) =>
+                  SignUp()));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xAAD1DA).withOpacity(1),
