@@ -114,7 +114,7 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
     
     final notificationData = {
       'type': 'monetary donation received',
-      'detail': '$sender has sent you sent a monetary donation',
+      'detail': '$sender has sent you a monetary donation',
       'recipient': recipient,
       'recipientEmail': recipientEmail,
       'userId': userId,
