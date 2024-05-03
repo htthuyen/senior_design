@@ -50,23 +50,22 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
         
 
     // pending donation for donor/company
-    if (uid != null){
-        
-        DatabaseReference ref = FirebaseDatabase.instance.ref('pending_donations').push();
-          
-            await ref.set({
-                'recipient': receiver,
-                'recipientEmail': receiverEmail,
-                'amount': money,
-                'date': date,
-                'sender': sender,
-                'company': companyName,
-                'senderEmail': emailSender,
-                'donorcomID': uid,
-            });
-            createNotification(userId: uid!, recipient: recipient.text, recipientEmail: recipientEmail.text);
-            final String? recipientNotId = await getUserID(receiver);
-            createNotificationS(userId: recipientNotId!, sender: sender, recipient: recipient.text, recipientEmail: recipientEmail.text);
+    if (uid != null) {
+      DatabaseReference ref = FirebaseDatabase.instance.ref('pending_donations').push();
+     
+      await ref.set({
+        'recipient': receiver,
+        'recipientEmail': receiverEmail,
+        'amount': money,
+        'date': date,
+        'sender': sender,
+        'company': companyName,
+        'senderEmail': emailSender,
+        'donorcomID': uid,
+      });
+
+      final String? recipientNotId = await getUserID(receiver);
+      createNotificationS(userId: recipientNotId!, sender: sender, recipient: recipient.text, recipientEmail: recipientEmail.text);
     }
   } catch (error){
     print('$error');
@@ -348,6 +347,7 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
                               onPressed: () {
                                 writeDonation();
                                 Navigator.of(context).pop();
+                                createNotification(userId: uid!, recipient: recipient.text, recipientEmail: recipientEmail.text);
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context){

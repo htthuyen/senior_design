@@ -1,15 +1,8 @@
-
-
-
 import 'dart:async';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:givehub/webcomponents/np_topbar.dart';
-import 'package:givehub/webcomponents/usertopbar.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../authentication/auth.dart';
+import 'package:givehub/authentication/auth.dart';
 
 class NPDonationReview extends StatefulWidget {
   const NPDonationReview({super.key});
@@ -74,38 +67,39 @@ class _NPDonationReview extends State<NPDonationReview> {
     }
   }
 
- //  when Accept button is pressed
-  void acceptedDonation(Map<dynamic,dynamic> donation, /*String recipient*/){
+  //  when Accept button is pressed
+  void acceptedDonation(Map<dynamic,dynamic> donation, String recipient, String sender){
 
             // Generate a unique ID for the accepted donation
     String donationId = DateTime.now().millisecondsSinceEpoch.toString();
     String decision = "accepted";
     if (uid!=null) {
-      setState(() {
+      setState(() async {
         donations.remove(donation);
-        
+        createNotificationS(userId: uid!, orgName: recipient, decision: decision);
+        final String? sendId = await getUserID(sender);
+        createNotification(userId: sendId!, orgName: recipient, decision: decision);
       });
 
    
       // save the accepted donation  to the accpeted_donation database of non-profit
       DatabaseReference ref = FirebaseDatabase.instance.ref('accepted_donations').push();
-      //createNotification(userId: uid!, orgName: recipient, decision: 'accepted');
+      
       ref.set(donation);
 
-      // //remove the donation from the pending_donation
-      // DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
-      // createNotification(userId: uid!, orgName: recipient, decision: 'rejected');
-      // ref1.child(donation['pendingDonationID']).remove();
+      //remove the donation from the pending_donation
+      DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
+      ref1.child(donation['pendingDonationID']).remove();
 
     }
   }
   // when Cancel button is press
-  void unacceptedDonation(Map<dynamic, dynamic> donation, /*String recipient*/){
-    
+  void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient){
+    String decision = "rejected";
     if (uid != null){
       setState(() {
         donations.remove(donation);
-       ;
+        createNotification(userId: uid!, orgName: recipient, decision: decision);
       });
       //remove the donation from the pending_donation
       DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
@@ -113,6 +107,60 @@ class _NPDonationReview extends State<NPDonationReview> {
 
     }
   }
+void createNotification({
+  required String userId, // Assuming you have the userId
+  // required String type,
+  // required String detail,
+  required String orgName,
+  required String decision
+}) {
+  try {
+    final notificationsRef = FirebaseDatabase.instance.reference().child('notifications');
+    
+    final notificationData = {
+      'type': 'donation $decision',
+      'detail': '$orgName has $decision your donation',
+      'orgName': orgName,
+      'userId': userId,
+    };
+
+    notificationsRef.push().set(notificationData).then((_) {
+      print('Notification created successfully.');
+    }).catchError((error) {
+      print('Error creating notification: $error');
+    });
+  } catch (e) {
+    print('Error creating notification: $e');
+  }
+}
+void createNotificationS({
+  required String userId, // Assuming you have the userId
+  // required String type,
+  // required String detail,
+  
+  required String orgName,
+  required String decision
+}) {
+  try {
+    final notificationsRef = FirebaseDatabase.instance.reference().child('notifications');
+    
+    final notificationData = {
+      'type': 'donation $decision',
+      'detail': 'You have $decision the donation from $orgName',
+      
+      'userId': userId,
+    };
+
+    notificationsRef.push().set(notificationData).then((_) {
+      print('Notification created successfully.');
+    }).catchError((error) {
+      print('Error creating notification: $error');
+    });
+  } catch (e) {
+    print('Error creating notification: $e');
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -122,8 +170,207 @@ class _NPDonationReview extends State<NPDonationReview> {
       ),
       home: Scaffold(
       key: _scaffoldKey,
-      appBar: UserTopBar(),
-      endDrawer: NpTopBar(),
+      appBar: AppBar(
+        title: GestureDetector(
+          onTap: () {
+            
+          },
+          child: Row(
+            children: [
+              Text(
+                'GiveHub',
+                style: GoogleFonts.oswald(
+                  color: Colors.white,
+                  fontSize: 30,
+                ),
+              ),
+            ],
+          ),
+        ),
+        centerTitle: false,
+        backgroundColor: const Color(0xFFFF3B3F),
+        actions: [
+          IconButton(
+            onPressed: () {
+              
+            },
+            icon: Icon(Icons.search, color: Colors.white),
+          ),
+          IconButton(
+            onPressed: () {
+              _scaffoldKey.currentState!.openEndDrawer();
+            },
+            icon: Icon(Icons.menu, color: Colors.white),
+          ),
+        ],
+      ),
+      endDrawer: Drawer(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.5, // Set the desired width (50% of screen width in this example)
+          child: Container(
+            color: const Color(0xFFFF3B3F), // Set the color here
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF3B3F),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Menu',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 24,
+                          ),
+                        ),
+                        Divider(
+                          color: Color(0xFFF3B3F),
+                          thickness: .5,
+                        ),
+                      ],
+                    ),
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Edit Account',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                      
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Event History',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                      
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Upcoming Events',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                      
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Donation History',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                      
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Payment Center',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                      
+                    },
+                  ),
+                  ExpansionTile(
+                    title: Text(
+                      'Grant Center',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    children: [
+                      ListTile(
+                        title: Text(
+                          'Apply',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                          
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Check Your Status',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                         
+                        },
+                      ),
+                    ],
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Notifications',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                     
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Subscriptions',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                      
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Logout',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                      
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
         body: 
           ListView(
             children: <Widget> [
@@ -206,49 +453,14 @@ class _NPDonationReview extends State<NPDonationReview> {
                 rows:  
                 donations.map((donation){
                   return DataRow(cells:[
-                    DataCell(
-                      Text(
-                        donation['date'].toString(),
-                        style: GoogleFonts.kreon(
-                          color: Color(0x555555).withOpacity(1),
-                          fontSize: 17,
-                        ),
-                      ),
-                    ),
-                    DataCell(
-                      Text(
-                        donation['sender'].toString(),
-                        style: GoogleFonts.kreon(
-                          color: Color(0x555555).withOpacity(1),
-                          fontSize: 17,
-                        ),
-                      ),
-                    ),
-                    DataCell(
-                      Text(
-                        donation['senderEmail'].toString(),
-                        style: GoogleFonts.kreon(
-                          color: Color(0x555555).withOpacity(1),
-                          fontSize: 17,
-                        ),
-                      ),
-                    ),
+                    DataCell(Text(donation['date'].toString())),
+                    DataCell(Text(donation['sender'].toString())),
+                    DataCell(Text(donation['senderEmail'].toString())),
                     DataCell(
                       donation['amount'] != null
-                       ? Text(
-                          donation['amount'].toString(),
-                          style: GoogleFonts.kreon(
-                            color: Color(0x555555).withOpacity(1),
-                            fontSize: 17,
-                          ),
-                        ) 
-                       : Text(
-                          donation['donationType'].toString(),
-                          style: GoogleFonts.kreon(
-                            color: Color(0x555555).withOpacity(1),
-                            fontSize: 17,
-                          ),
-                        ),
+                       ? Text(donation['amount'].toString()) 
+                       :Text(donation['donationType'].toString())
+                      
                     ),
                     DataCell(
                       Row(
@@ -256,7 +468,7 @@ class _NPDonationReview extends State<NPDonationReview> {
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              acceptedDonation(donation);
+                              acceptedDonation(donation, donation['recipient'], donation['sender']);
                             },
                           style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFD9D9D9),
@@ -276,7 +488,7 @@ class _NPDonationReview extends State<NPDonationReview> {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              unacceptedDonation(donation);
+                              unacceptedDonation(donation, donation['recipient']);
                             },
                           style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFD9D9D9),
