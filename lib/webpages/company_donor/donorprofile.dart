@@ -44,11 +44,11 @@ class _DonorProfilePageState extends State<DonorProfilePage> {
   if (currentUserUid != null && np?.toLowerCase().trim() == 'individual donor') {
     _stream = _database.child('users').child(currentUserUid).onValue.listen((event) {
       final data = Map<String, dynamic>.from(event.snapshot.value as dynamic);
-      final userEmail = data['email'];
-      final userMembership = data['memberSince'];
-      final userName = data['name'];
-      final userPhone = data['phoneNumber'];
-      final userCompanyInfo = data['companyInfo'];
+      final userEmail = data['email'] ?? '';
+      final userMembership = data['memberSince' ?? ''];
+      final userName = data['name'] ?? '';
+      final userPhone = data['phoneNumber'] ?? '';
+      final userCompanyInfo = data['companyInfo'] ?? '';
 
       // Pushing data to database
       setState(() {
