@@ -91,9 +91,9 @@ class _MyEventsPageState extends State<MyEventsPage> {
       
         for (var attendeeIdKey in attendeesData.keys) {
           final attendeeData = attendeesData[attendeeIdKey] as Map<dynamic, dynamic>;
-          final attendeeUserId = attendeeData['fullName'] as String?;
+          final attendeeUserId = attendeeData['userId'] as String?;
           final String? userName = await getUserNameFromDatabase(userId);
-          if (attendeeUserId == userName) {
+          if (attendeeUserId == userId) {
             print('Found matching attendee ID: $attendeeIdKey');
             return attendeeIdKey.toString();
           }

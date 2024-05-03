@@ -1,13 +1,38 @@
 //this page allows donors/companies to sign up for events created by non-profits
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:givehub/authentication/auth.dart';
+import 'package:flutter/widgets.dart';
+import 'package:givehub/donorprofile.dart';
+import 'package:givehub/welcomepage.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../webcomponents/donor_company_topbar.dart';
-import '../../webcomponents/usertopbar.dart';
+import 'auth.dart';
+import 'companyprofilepage.dart';
+import 'create_event.dart';
 import 'currentevents.dart';
+import 'donationofinterestspage.dart';
+import 'donor_company_donationhistory.dart';
+import 'donorpaymentpage.dart';
+import 'event_history.dart';
+import 'events_np.dart';
+import 'grantcreationpage.dart';
+import 'myeventspage.dart';
+import 'needs.dart';
+import 'nonmondon.dart';
+import 'notificationspage.dart';
+import 'np_applicationstatus.dart';
+import 'np_donationreview.dart';
+import 'np_history.dart';
+import 'npprofilepage.dart';
+import 'npselectionpage.dart';
+import 'search.dart';
+import 'subscriptions.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'grantapp.dart';
+import 'auth.dart';
 
 class EventSignUpPage extends StatefulWidget {
 
@@ -82,7 +107,7 @@ class _EventSignUpPageState extends State<EventSignUpPage> {
       });
   }
 
-  void submitForm(BuildContext context, String orgName, String eventName) {
+  void submitForm(BuildContext context, String orgName, String eventName, String userId) {
    
       userRegisterEvent(
         context,
@@ -91,6 +116,7 @@ class _EventSignUpPageState extends State<EventSignUpPage> {
         phoneNumberController.text,
         dateAvailableController.text,
         timeAvailableController.text,
+        userId,
         eventName,
         orgName,
         optSubOut
@@ -211,8 +237,311 @@ class _EventSignUpPageState extends State<EventSignUpPage> {
       ),
         home: Scaffold(
           key: _scaffoldKey,
-          appBar: UserTopBar(),
-      endDrawer: DonorComTopBar(),
+          appBar: AppBar(
+            title: GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> WelcomePage()));
+              },
+              child: Row(
+                children: [
+                  Text(
+                    'GiveHub',
+                    style: GoogleFonts.oswald(
+                      color: Colors.white,
+                      fontSize: 30,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            centerTitle: false,
+            backgroundColor: const Color(0xFFFF3B3F),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> SearchPage()));
+                },
+                icon: Icon(Icons.search, color: Colors.white),
+              ),
+              IconButton(
+                onPressed: () {
+                  _scaffoldKey.currentState!.openEndDrawer();
+                },
+                icon: Icon(Icons.menu, color: Colors.white),
+              ),
+            ],
+          ),
+          endDrawer: Drawer(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.5, 
+          child: Container(
+            color: const Color(0xFFFF3B3F), 
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF3B3F),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Menu',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 24,
+                          ),
+                        ),
+                        Divider(
+                          color: Color(0xFFF3B3F),
+                          thickness: .5,
+                        ),
+                      ],
+                    ),
+                  ),
+                  ExpansionTile(
+                    title: Text(
+                      'Account Information',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                     collapsedIconColor: Colors.white,
+                    trailing: Icon(Icons.expand_more, color: Colors.white), 
+                    children: [
+                      ListTile(
+                        title: Text(
+                          'Edit Profile',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () async {
+                          
+                            String? userType = await getUserTypeFromDatabase(uid!);
+                            print(userType);
+                            if (userType == 'Nonprofit Organization') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NPProfilePage()));
+                            } else if (userType == 'Individual Donor') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DonorProfilePage()));
+                            } else if (userType == 'Company') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CompanyProfilePage()));
+                            }
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'My Profile',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () async {
+                          
+                            String? userType = await getUserTypeFromDatabase(uid!) as String?;
+                            if (userType == 'Nonprofit Organization') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NPProfilePage()));
+                            } else if (userType == 'Individual Donor') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DonorProfilePage()));
+                            } else if (userType == 'Company') {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CompanyProfilePage()));
+                            }
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Update Needs',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                         Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                              NeedsPage())
+                            );
+                        },
+                      ),
+                    ],
+                  ),
+                  ExpansionTile(
+                    title: Text(
+                      'Donation Center',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                     collapsedIconColor: Colors.white,
+                    trailing: Icon(Icons.expand_more, color: Colors.white), 
+                    children: [
+                      ListTile(
+                        title: Text(
+                          'Donation Requests',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                           Navigator.push(context, MaterialPageRoute(
+                                builder: (context) =>
+                                  NPDonationReview()
+                           ), ); 
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Donation History',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                            NPHistory())
+                          );
+                        },
+                      ),
+                    ],
+                  ), 
+                  ExpansionTile(
+                    title: Text(
+                      'Event Center',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                     collapsedIconColor: Colors.white,
+                    trailing: Icon(Icons.expand_more, color: Colors.white), 
+                    children: [
+                      ListTile(
+                        title: Text(
+                          'Register for Event',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) =>
+                              CurrentEventsPage())
+                            );
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Your Events',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                         Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                             MyEventsPage())
+                            );
+                        },
+                      ),
+                      
+                    ],
+                  ),
+                  ExpansionTile(
+                    title: Text(
+                      'Grant Center',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    collapsedIconColor: Colors.white,
+                    trailing: Icon(Icons.expand_more, color: Colors.white), 
+                    children: [
+                      ListTile(
+                        title: Text(
+                          'Apply for a Grant',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                           Navigator.push(context, MaterialPageRoute(
+                            builder: (context) =>
+                            GrantApp())
+                          );
+                        },
+                      ),
+                      ListTile(
+                        title: Text(
+                          'Application Status',
+                          style: GoogleFonts.oswald(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>
+                            NPApplicationStatusPage())
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Notifications',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                     Navigator.push(context, MaterialPageRoute(builder: (context)=> NotificationsPage()));
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Subscriptions',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> SubscriptionPage()));
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Logout',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                      _showLogoutDialog(context);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
@@ -662,7 +991,7 @@ class _EventSignUpPageState extends State<EventSignUpPage> {
                                     ElevatedButton(
                                       
                                       onPressed: () {
-                                        submitForm(context, chosen.getOrgName(), chosen.getEventName());
+                                        submitForm(context, chosen.getOrgName(), chosen.getEventName(), uid!);
                                         createNotification(userId: uid!, orgName: chosen.getOrgName(), eventName: chosen.getEventName());
                                       },
                                       style: ElevatedButton.styleFrom(
