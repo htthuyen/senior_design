@@ -3,10 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:givehub/authentication/auth.dart';
-
-import '../webcomponents/donor_company_topbar.dart';
-import '../webcomponents/usertopbar.dart';
+import 'auth.dart';
 
 class SubscriptionPage extends StatefulWidget {
   const SubscriptionPage({super.key});
@@ -156,7 +153,6 @@ void createNotification({
       home: Scaffold(
         //the top portion of the webpage
         appBar: UserTopBar(),
-        endDrawer: DonorComTopBar(),
         body: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
