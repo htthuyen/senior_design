@@ -2,24 +2,26 @@
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:givehub/webcomponents/np_topbar.dart';
-import 'package:givehub/webcomponents/usertopbar.dart';
-import 'package:givehub/webpages/np/grantstatus.dart';
+import 'package:flutter/rendering.dart';
+import 'package:givehub/np_history.dart';
+import 'package:givehub/search.dart';
+import 'package:givehub/subscriptions.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../authentication/auth.dart';
-import '../company_donor/companyprofilepage.dart';
-import '../company_donor/donorprofile.dart';
-import '../notificationspage.dart';
-import '../search.dart';
-import '../subscription.dart';
-import 'createevent.dart';
+import 'package:intl/intl.dart';
+import 'auth.dart';
+import 'companyprofilepage.dart';
+import 'create_event.dart';
+import 'donor_company_donationhistory.dart';
+import 'donorprofile.dart';
+import 'events_np.dart';
 import 'grantapp.dart';
+import 'myeventspage.dart';
 import 'needs.dart';
-import 'npdonationhistory.dart';
-import 'npdonationreview.dart';
+import 'notificationspage.dart';
+import 'np_applicationstatus.dart';
+import 'np_donationreview.dart';
 import 'npprofilepage.dart';
-
+import 'events.dart' as event_lib;
 
 
 class EventforNP {
@@ -129,7 +131,7 @@ class _EventsNPState extends State<EventsNP> {
       home: Scaffold(
         key: _scaffoldKey,
         appBar: UserTopBar(),
-        endDrawer: NpTopBar(),
+      endDrawer: NpTopBar(),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -465,6 +467,8 @@ void createNotification({
                       
                       _updateEvent(
                         eventId: eventId,
+                        newEventName: eventNameController.text,
+                        newOrgName: orgNameController.text,
                         newDate: dateController.text,
                         newTime: timeController.text,
                         newLocation: locationController.text,
@@ -496,6 +500,8 @@ void createNotification({
   }
   void _updateEvent({
     required String eventId,
+    required String newEventName,
+    required String newOrgName,
     required String newDate,
     required String newTime,
     required String newLocation,
@@ -503,11 +509,13 @@ void createNotification({
     required String newDescription,
   }) async {
     try {
-     
+      // Get a reference to the event node in the database
       DatabaseReference eventRef = FirebaseDatabase.instance.reference().child('events').child(eventId);
       
-      
+      // Create a map to hold the updated event data
       Map<String, dynamic> eventData = {
+        'eventName': eventName,
+        'orgName': orgName,
         'dateTime': newDate,
         'time': newTime,
         'location': newLocation,
@@ -516,7 +524,7 @@ void createNotification({
       };
        
       String message = 'You updated event: ${eventData['eventName']}.';
-      createNotification(userId: uid!, orgName: orgName, message: message);
+      createNotification(userId: uid!, orgName: newOrgName, message: message);
       
       
       String attendMessage = 'Subscription: ${eventData['eventName']} was updated by the organizer: ${eventData['orgName']}.';
@@ -524,7 +532,7 @@ void createNotification({
      
       await eventRef.update(eventData);
       
-      
+     
     } catch (e) {
       
       print('Error updating event information: $e');
@@ -786,3 +794,4 @@ void createNotification({
   }
   
 }
+
