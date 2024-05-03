@@ -6,7 +6,7 @@ import 'package:givehub/webcomponents/usertopbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../authentication/auth.dart';
-import 'eventsignuppage.dart';
+import 'grantcreationpage.dart';
 
 
 class MyGrants extends StatefulWidget {
