@@ -209,7 +209,7 @@ class _MyGrantsState extends State<MyGrants> {
               onPressed: () {
                 Navigator.push(context, new MaterialPageRoute(
                 builder: (context) =>
-                  new EventSignUpPage())
+                  GrantCreationPage())
                 );
               },
               child: Text('Create a grant.', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
