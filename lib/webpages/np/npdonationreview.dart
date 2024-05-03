@@ -82,6 +82,7 @@ class _NPDonationReview extends State<NPDonationReview> {
     if (uid!=null) {
       setState(() {
         donations.remove(donation);
+        createNotificationS(userId: uid!, orgName: recipient, decision: decision);
         createNotification(userId: uid!, orgName: recipient, decision: decision);
       });
 
@@ -103,6 +104,7 @@ class _NPDonationReview extends State<NPDonationReview> {
     if (uid != null){
       setState(() {
         donations.remove(donation);
+        createNotificationS(userId: uid!, orgName: recipient, decision: decision);
         createNotification(userId: uid!, orgName: recipient, decision: decision);
       });
       //remove the donation from the pending_donation
@@ -111,6 +113,60 @@ class _NPDonationReview extends State<NPDonationReview> {
 
     }
   }
+  void createNotification({
+  required String userId, // Assuming you have the userId
+  // required String type,
+  // required String detail,
+  required String orgName,
+  required String decision
+}) {
+  try {
+    final notificationsRef = FirebaseDatabase.instance.reference().child('notifications');
+    
+    final notificationData = {
+      'type': 'donation $decision',
+      'detail': '$orgName has $decision your donation',
+      'orgName': orgName,
+      'userId': userId,
+    };
+
+    notificationsRef.push().set(notificationData).then((_) {
+      print('Notification created successfully.');
+    }).catchError((error) {
+      print('Error creating notification: $error');
+    });
+  } catch (e) {
+    print('Error creating notification: $e');
+  }
+}
+  void createNotificationS({
+  required String userId, // Assuming you have the userId
+  // required String type,
+  // required String detail,
+  
+  required String orgName,
+  required String decision
+}) {
+  try {
+    final notificationsRef = FirebaseDatabase.instance.reference().child('notifications');
+    
+    final notificationData = {
+      'type': 'donation $decision',
+      'detail': 'You have $decision the donation from $orgName',
+      
+      'userId': userId,
+    };
+
+    notificationsRef.push().set(notificationData).then((_) {
+      print('Notification created successfully.');
+    }).catchError((error) {
+      print('Error creating notification: $error');
+    });
+  } catch (e) {
+    print('Error creating notification: $e');
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
