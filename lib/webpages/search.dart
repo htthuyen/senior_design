@@ -304,23 +304,7 @@ void createNotification({
                                       )),
                                 ),
                               ),
-                              SizedBox(
-                                height: 125,
-                                width: 50,
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.calendar_month,
-                                      color: Color.fromRGBO(85, 85, 85, 1),
-                                      size: 50,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pushNamed(context, '/myevents');
-                                    },
-                                  ),
-                                ),
-                              ),
+                              
                               SizedBox(
                                 height: 125,
                                 width: 50,
