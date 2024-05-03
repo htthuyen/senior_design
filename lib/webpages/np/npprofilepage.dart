@@ -7,17 +7,12 @@ import 'package:givehub/webcomponents/np_topbar.dart';
 import 'package:givehub/webcomponents/usertopbar.dart';
 import 'package:givehub/webpages/np/grantstatus.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../../authentication/auth.dart';
 import '../../webcomponents/profilepicture.dart';
-import '../company_donor/donorcompanydonationhistory.dart';
-import '../subscription.dart';
-import 'createevent.dart';
-import 'eventnp.dart';
-import 'grantapp.dart';
-import 'myapps.dart';
-import 'needs.dart';
+import '../company_donor/companyprofilepage.dart';
+import '../company_donor/donorprofile.dart';
 import 'npdonationhistory.dart';
-import 'npdonationreview.dart';
 
 
 class NPProfilePage extends StatefulWidget {
@@ -83,44 +78,11 @@ class _NPProfilePageState extends State<NPProfilePage> {
     }
   }
 
-  void _updateProfile({
-    required String newName,
-      required String newEmail,
-      //required String newPhone,
-      required String newAboutUs,
-      //required String newWeAreSeeking,
-      required String newMember,
-      required String newWebsite,
-    }) {
-    String? currentUserUid = FirebaseAuth.instance.currentUser?.uid;
-
-    if (currentUserUid != null) {
-      Map<String, dynamic> updateData = {
-        'name': newName,
-        'email': newEmail,
-        //'phone': newPhone,
-        'aboutUs': newAboutUs,
-        //'selectedNeeds': newWeAreSeeking,
-        'memberSince': newMember,
-        'website': newWebsite,
-      };
-
-      _database.child('users').child(currentUserUid).update(updateData)
-        .then((_) {
-          print('User information updated successfully.');
-        })
-        .catchError((error) {
-          print('Error updating user information: $error');
-        });
-    }
-  }
-
-
-  void _showEditProfileDialog() {
+  void _showEditProfileDialog(BuildContext context) {
     TextEditingController aboutUsController = TextEditingController(text: aboutUs);
-    TextEditingController weAreSeekingController = TextEditingController(text: weAreSeeking);
+    //TextEditingController weAreSeekingController = TextEditingController(text: weAreSeeking);
     TextEditingController nameController = TextEditingController(text: name);
-    TextEditingController memberSinceController = TextEditingController(text: member);
+    //TextEditingController memberSinceController = TextEditingController(text: member);
     TextEditingController websiteController = TextEditingController(text: website);
     TextEditingController emailController = TextEditingController(text: email);
 
@@ -149,7 +111,7 @@ class _NPProfilePageState extends State<NPProfilePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'Name', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
+                      decoration: InputDecoration(hintText: 'Name', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
                       style: GoogleFonts.oswald(
                         color: Color(0x555555).withOpacity(1), 
                         fontWeight: FontWeight.bold,
@@ -159,7 +121,7 @@ class _NPProfilePageState extends State<NPProfilePage> {
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'Email', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
+                      decoration: InputDecoration(hintText: 'Email', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
                       style: GoogleFonts.oswald(
                         color: Color(0x555555).withOpacity(1), 
                         fontWeight: FontWeight.bold,
@@ -169,7 +131,7 @@ class _NPProfilePageState extends State<NPProfilePage> {
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'About Us', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100,color: Color(0x555555).withOpacity(1))),
+                      decoration: InputDecoration(hintText: 'About Us', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100,color: Color(0x555555).withOpacity(1))),
                       style: GoogleFonts.oswald(
                         color: Color(0x555555).withOpacity(1), 
                         fontWeight: FontWeight.bold,
@@ -178,19 +140,19 @@ class _NPProfilePageState extends State<NPProfilePage> {
                       controller: aboutUsController,
                     ),
                     
+                    // const SizedBox(height: 20),
+                    // TextFormField(
+                    //   decoration: InputDecoration(labelText: 'Member Since', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100,color: Color(0x555555).withOpacity(1))),
+                    //   style: GoogleFonts.oswald(
+                    //     color: Color(0x555555).withOpacity(1), 
+                    //     fontWeight: FontWeight.bold,
+                    //     fontSize: 20,
+                    //   ),
+                    //   controller: memberSinceController,
+                    // ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'Member Since', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100,color: Color(0x555555).withOpacity(1))),
-                      style: GoogleFonts.oswald(
-                        color: Color(0x555555).withOpacity(1), 
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                      controller: memberSinceController,
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Website', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
+                      decoration: InputDecoration(hintText: 'Website', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
                       style: GoogleFonts.oswald(
                         color: Color(0x555555).withOpacity(1), 
                         fontWeight: FontWeight.bold,
@@ -217,18 +179,13 @@ class _NPProfilePageState extends State<NPProfilePage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    
-                    setState(() {
-                      aboutUs = aboutUsController.text;
-                      weAreSeeking = weAreSeekingController.text;
-                    });
                     _updateProfile(
                       newName: nameController.text,
                       newEmail: 'new@example.com',
                       //newPhone: '1234567890',
                       newAboutUs: aboutUsController.text,
                       //newWeAreSeeking: weAreSeekingController.text,
-                      newMember: memberSinceController.text,
+                      //newMember: memberSinceController.text,
                       newWebsite: websiteController.text
                     );
 
@@ -251,6 +208,37 @@ class _NPProfilePageState extends State<NPProfilePage> {
     );
   }
 
+  void _updateProfile({
+    required String newName,
+      required String newEmail,
+      //required String newPhone,
+      required String newAboutUs,
+      //required String newWeAreSeeking,
+      //required String newMember,
+      required String newWebsite,
+    }) {
+    String? currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (currentUserUid != null) {
+      Map<String, dynamic> updateData = {
+        'name': newName,
+        'email': newEmail,
+        //'phone': newPhone,
+        'aboutUs': newAboutUs,
+        //'selectedNeeds': newWeAreSeeking,
+        //'memberSince': newMember,
+        'website': newWebsite,
+      };
+
+      _database.child('users').child(currentUserUid).update(updateData)
+        .then((_) {
+          print('User information updated successfully.');
+        })
+        .catchError((error) {
+          print('Error updating user information: $error');
+        });
+    }
+  }
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -369,6 +357,12 @@ class _NPProfilePageState extends State<NPProfilePage> {
                     right: 10,
                     child: Row(
                       children: [
+                        IconButton(
+                          onPressed: (){
+                            _showEditProfileDialog(context);
+                          }, 
+                          icon: const Icon(Icons.edit),
+                        ),
                         IconButton(
                           icon: Icon(
                             isFavorite ? Icons.favorite : Icons.favorite_border,

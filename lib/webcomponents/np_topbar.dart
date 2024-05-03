@@ -330,38 +330,6 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isFavorite = false;
   late StreamSubscription _stream;
 
-  void _updateProfile({
-    required String newName,
-      required String newEmail,
-      //required String newPhone,
-      required String newAboutUs,
-      //required String newWeAreSeeking,
-      required String newMember,
-      required String newWebsite,
-    }) {
-    String? currentUserUid = FirebaseAuth.instance.currentUser?.uid;
-
-    if (currentUserUid != null) {
-      Map<String, dynamic> updateData = {
-        'name': newName,
-        'email': newEmail,
-        //'phone': newPhone,
-        'aboutUs': newAboutUs,
-        //'selectedNeeds': newWeAreSeeking,
-        'memberSince': newMember,
-        'website': newWebsite,
-      };
-
-      _database.child('users').child(currentUserUid).update(updateData)
-        .then((_) {
-          print('User information updated successfully.');
-        })
-        .catchError((error) {
-          print('Error updating user information: $error');
-        });
-    }
-  }
-
 
   // void _showEditProfileDialog(BuildContext context) {
   //   TextEditingController aboutUsController = TextEditingController(text: aboutUs);

@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:givehub/webcomponents/donor_company_topbar.dart';
 import 'package:givehub/webcomponents/usertopbar.dart';
+import '../../webcomponents/np_topbar.dart';
+import '../np/npprofilepage.dart';
+import 'companyprofilepage.dart';
 import 'donorcompanydonationhistory.dart';
 import 'mygrants.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -142,6 +146,12 @@ class _DonorProfilePageState extends State<DonorProfilePage> {
                 child: Row(
                   children: [
                     IconButton(
+                      onPressed: (){
+                        _showEditProfileDialog(context);
+                      }, 
+                      icon: const Icon(Icons.edit),
+                    ),
+                    IconButton(
                       icon: Icon(
                         isFavorite ? Icons.favorite : Icons.favorite_border,
                         color: isFavorite ? Colors.red : null,
@@ -181,7 +191,117 @@ class _DonorProfilePageState extends State<DonorProfilePage> {
       ),
     );
   }
-    
+
+void _showEditProfileDialog(BuildContext context) {
+    TextEditingController nameController = TextEditingController(text: name);
+    TextEditingController emailController = TextEditingController(text: email);
+    //TextEditingController phoneController = TextEditingController(text: phone);
+    //TextEditingController memberSinceController = TextEditingController(text: member);
+    TextEditingController companyInfoController = TextEditingController(text: companyInfo);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            width: 800, 
+            height: 600,
+            color: Color(0xCAEBF2).withOpacity(1),
+            child: AlertDialog(
+              backgroundColor: Color(0xCAEBF2).withOpacity(1),
+              title: Text(
+                'Edit Profile',
+                style: GoogleFonts.oswald(
+                  fontSize: 30,
+                ),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(hintText: 'Name'),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: emailController,
+                      decoration: InputDecoration(hintText: 'Email'),
+                    ),
+                    const SizedBox(height: 20),
+                    // TextFormField(
+                    //   controller: phoneController,
+                    //   decoration: InputDecoration(labelText: 'Phone'),
+                    // ),
+                    // const SizedBox(height: 20),
+                    // TextFormField(
+                    //   controller: memberSinceController,
+                    //   decoration: InputDecoration(labelText: 'Member Since'),
+                    // ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: companyInfoController,
+                      decoration: InputDecoration(hintText: 'Company Info'),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _updateProfile(
+                      newName: nameController.text,
+                      newEmail: emailController.text,
+                      // newPhone: phoneController.text,
+                      // newMember: memberSinceController.text,
+                      newCompanyInfo: companyInfoController.text,
+                    );
+
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Save', style: GoogleFonts.oswald(fontSize: 20, color: Colors.white)),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Update information in database
+  void _updateProfile({
+      required String newName,
+      required String newEmail,
+      required String newCompanyInfo,
+    }) {
+    String? currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+
+    // Update to new information
+    if (currentUserUid != null) {
+      Map<String, dynamic> updateData = {
+        'name': newName,
+        'email': newEmail,
+        'companyInfo': newCompanyInfo,
+      };
+
+      _database.child('users').child(currentUserUid).update(updateData)
+        .then((_) {
+          print('User information updated successfully.');
+        })
+        .catchError((error) {
+          print('Error updating user information: $error');
+        });
+    }
+  }
+
+
   @override
   void deactivate(){
     _stream?.cancel();
