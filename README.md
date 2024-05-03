@@ -43,7 +43,7 @@
 ### Login: The login page is for users who have an account with GiveHub and can input their email address and password to login. 
 ### My apps: The my apps page is for nonprofits to view their submitted grant applications and edit or withdraw them.
 ### My events : This page allows donors/companies to see all of the events they have registered for. Also, they are able to un-register from an event and turn off notifications for an event as well.
-### My grants: The my grants page is for donors and companies to view their all their open and created grant applications and gives them the option to add more applications, edit applications or delete them. 
+### My grants: The my grants page is for donors and companies to view their all their open and created grant applications and gives them the option to add more applications, edit applications or cancel and delete them. Canceling and deleting here would cancel the payment issue via third party payment center.
 ### Needs: The needs page is similiar to the Donations of Interests page for Companies and Donors, but the Needs page saves the needs specified by our Non Profits and then pairs them with Companies and Donors thorugh the connections page. 
 ### Non Monetary donation: The Non Monetary Donation is for donors to submit a form for non monetary donations.
 ### Notifications page: The notifications page provides real time updates to users when someone has applied for grants, accepted grants, made payments, subscribed to profiles, or signed up for events.
