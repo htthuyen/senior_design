@@ -74,16 +74,17 @@ class _NPDonationReview extends State<NPDonationReview> {
   }
 
  //  when Accept button is pressed
-  void acceptedDonation(Map<dynamic,dynamic> donation, String recipient){
+  void acceptedDonation(Map<dynamic,dynamic> donation, String recipient, String sender){
 
             // Generate a unique ID for the accepted donation
     String donationId = DateTime.now().millisecondsSinceEpoch.toString();
     String decision = "accepted";
     if (uid!=null) {
-      setState(() {
+      setState(() async {
         donations.remove(donation);
         createNotificationS(userId: uid!, orgName: recipient, decision: decision);
-        createNotification(userId: uid!, orgName: recipient, decision: decision);
+        final String? sendId = await getUserID(sender);
+        createNotification(userId: sendId!, orgName: recipient, decision: decision);
       });
 
    
@@ -104,7 +105,6 @@ class _NPDonationReview extends State<NPDonationReview> {
     if (uid != null){
       setState(() {
         donations.remove(donation);
-        createNotificationS(userId: uid!, orgName: recipient, decision: decision);
         createNotification(userId: uid!, orgName: recipient, decision: decision);
       });
       //remove the donation from the pending_donation
@@ -113,7 +113,7 @@ class _NPDonationReview extends State<NPDonationReview> {
 
     }
   }
-  void createNotification({
+void createNotification({
   required String userId, // Assuming you have the userId
   // required String type,
   // required String detail,
@@ -139,7 +139,7 @@ class _NPDonationReview extends State<NPDonationReview> {
     print('Error creating notification: $e');
   }
 }
-  void createNotificationS({
+void createNotificationS({
   required String userId, // Assuming you have the userId
   // required String type,
   // required String detail,
@@ -166,6 +166,7 @@ class _NPDonationReview extends State<NPDonationReview> {
     print('Error creating notification: $e');
   }
 }
+
 
   @override
   Widget build(BuildContext context) {
@@ -310,7 +311,7 @@ class _NPDonationReview extends State<NPDonationReview> {
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              acceptedDonation(donation);
+                              acceptedDonation(donation,  donation['sender']);
                             },
                           style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFD9D9D9),
