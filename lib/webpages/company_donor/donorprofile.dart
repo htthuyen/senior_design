@@ -235,7 +235,7 @@ class _DonorProfilePageState extends State<DonorProfilePage> {
                     SizedBox(height: 30), 
                     Text(
                       'About: ' + companyInfo,
-                      style: GoogleFonts.oswald(fontSize: 28, fontWeight: FontWeight.w600),
+                      style: GoogleFonts.oswald(fontSize: 28, fontWeight: FontWeight.w400),
                     ),
                     SizedBox(height: 30), 
                     Text(
@@ -249,7 +249,7 @@ class _DonorProfilePageState extends State<DonorProfilePage> {
                     ),
                     SizedBox(height: 30),
                     Text(
-                      'Memeber since: $member',
+                      'Member since: $member',
                       style: GoogleFonts.oswald(fontSize: 28),
                     ),
                   ],

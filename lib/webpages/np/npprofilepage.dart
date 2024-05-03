@@ -335,11 +335,11 @@ class _NPProfilePageState extends State<NPProfilePage> {
                         SizedBox(height: 30), 
                         Text(
                           'About: ' + aboutUs,
-                          style: GoogleFonts.oswald(fontSize: 28, fontWeight: FontWeight.w600, color:Color(0x555555).withOpacity(1))
+                          style: GoogleFonts.oswald(fontSize: 28, fontWeight: FontWeight.w400, color:Color(0x555555).withOpacity(1))
                         ),
                         SizedBox(height: 30), 
                         Text(
-                          'Email:' + email,
+                          'Email: ' + email,
                           style: GoogleFonts.oswald(fontSize: 28, color:Color(0x555555).withOpacity(1))
                         ),
                         SizedBox(height: 30), 

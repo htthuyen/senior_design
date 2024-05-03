@@ -259,7 +259,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
                         SizedBox(height: 30), 
                         Text(
                           'Company Info: ' + companyInfo,
-                          style: GoogleFonts.oswald(fontSize: 28, fontWeight: FontWeight.w600),
+                          style: GoogleFonts.oswald(fontSize: 28, fontWeight: FontWeight.w400),
                         ),
                         SizedBox(height: 30), 
                         Text(
