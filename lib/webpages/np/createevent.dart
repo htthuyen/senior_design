@@ -1,21 +1,13 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:givehub/notificationspage.dart';
-import 'package:givehub/np_history.dart';
-import 'package:givehub/npprofilepage.dart';
-import 'package:givehub/search.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'subscriptions.dart';
-import 'auth.dart';
-import 'companyprofilepage.dart';
-import 'donor_company_donationhistory.dart';
-import 'donorprofile.dart';
-import 'events_np.dart';
-import 'grantapp.dart';
-import 'myeventspage.dart';
-import 'needs.dart';
-import 'np_applicationstatus.dart';
-import 'np_donationreview.dart';
+
+import '../../authentication/auth.dart';
+import '../../webcomponents/np_topbar.dart';
+import '../../webcomponents/usertopbar.dart';
+import '../company_donor/myeventspage.dart';
+import 'eventnp.dart';
+
 
 class CreateEvent extends StatefulWidget {
   @override
