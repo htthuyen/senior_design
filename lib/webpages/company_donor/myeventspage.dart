@@ -301,8 +301,8 @@ class _MyEventsPageState extends State<MyEventsPage> {
   final String contact;
   final String description;
   final String eventId;
-  final bool isNotificationFilled;
-  final bool isOptOut;
+  bool isNotificationFilled;
+  bool isOptOut;
  
 
   EventCard({
@@ -400,30 +400,29 @@ class _MyEventsPageState extends State<MyEventsPage> {
     }
   }
   Future<void> updateOptSubOutValue(String eventName, String userId, String orgName, bool isOptedOut) async {
-    try {
-      String? fullName = await getUserNameFromDatabase(uid!);
-      
-      String? eventId = await getEventId(orgName, eventName);
-      String? attendeeId = await getAtId(orgName, eventName, fullName!);
-      if (attendeeId != null && eventId != null) {
-        DatabaseReference attendeeRef = FirebaseDatabase.instance.reference()
-          .child('events').child(eventId).child('attendees').child(attendeeId);
+  try {
+    String? fullName = await getUserNameFromDatabase(uid!);
+    
+    String? eventId = await getEventId(orgName, eventName);
+    String? attendeeId = await getAtId(orgName, eventName, fullName!);
+    if (attendeeId != null && eventId != null) {
+      DatabaseReference attendeeRef = FirebaseDatabase.instance.reference()
+        .child('events').child(eventId).child('attendees').child(attendeeId);
 
-        Map<String, dynamic> updatedData = {
-          'optSubOut': isOptedOut, 
-        };
+      Map<String, dynamic> updatedData = {
+        'optSubOut': isOptedOut, 
+      };
 
-        await attendeeRef.update(updatedData);
+      await attendeeRef.update(updatedData);
 
-        print('Value updated successfully');
-      } else {
-        print('Attendee ID or Event ID not found');
-      }
-    } catch (e) {
-      print('Error updating value: $e');
+      print('Value updated successfully');
+    } else {
+      print('Attendee ID or Event ID not found');
     }
+  } catch (e) {
+    print('Error updating value: $e');
   }
-
+}
   void createNotification({
     required String userId, 
     required String orgName,
@@ -496,26 +495,21 @@ class _MyEventsPageState extends State<MyEventsPage> {
                     IconButton(
                       icon: Icon(
                         Icons.notifications,
-                        color: widget.isNotificationFilled == false ? Color(0xFF3B3F).withOpacity(1) : Colors.grey,
+                        color: widget.isNotificationFilled ? Colors.grey : Color(0xFF3B3F).withOpacity(1),
                       ),
-                        onPressed: () async {
-                          
-                          String message = 'You have un-subscribed from ${widget.eventName}';
-                          final String? userName = await getUserNameFromDatabase(uid!);
-                          final String? eventId = await getEventId(widget.orgName, widget.eventName);
-                          final String? atenId = await getAtId(widget.orgName, widget.eventName, userName!);
-                         
-                          createNotification(userId: uid!, orgName: widget.orgName, message: message);
-                          updateOptSubOutValue(widget.eventName, uid!, widget.orgName, isOptOut);
-                          setState(() {
-                            isNotificationFilled = !widget.isNotificationFilled;
-                            
-                            isOptOut = !widget.isOptOut;
-                            Navigator.push(context, MaterialPageRoute(builder: ((context) => MyEventsPage())));
-                          });
-                         
-                        },
-
+                      onPressed: () async {
+                        String message = 'You have un-subscribed from ${widget.eventName}';
+                        final String? userName = await getUserNameFromDatabase(uid!);
+                        final String? eventId = await getEventId(widget.orgName, widget.eventName);
+                        final String? attendeeId = await getAtId(widget.orgName, widget.eventName, userName!);
+                      
+                        createNotification(userId: uid!, orgName: widget.orgName, message: message);
+                        updateOptSubOutValue(widget.eventName, uid!, widget.orgName, !widget.isOptOut); 
+                        setState(() {
+                          widget.isNotificationFilled = !widget.isNotificationFilled;
+                          widget.isOptOut = !widget.isOptOut; 
+                        });
+                      },
                     ),
                   ],
                 ),
