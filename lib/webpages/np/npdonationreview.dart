@@ -2,13 +2,10 @@
 
 
 import 'dart:async';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:givehub/webcomponents/np_topbar.dart';
-import 'package:givehub/webcomponents/usertopbar.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../authentication/auth.dart';
+import 'auth.dart';
 
 class NPDonationReview extends StatefulWidget {
   const NPDonationReview({super.key});
@@ -73,7 +70,7 @@ class _NPDonationReview extends State<NPDonationReview> {
     }
   }
 
- //  when Accept button is pressed
+  //  when Accept button is pressed
   void acceptedDonation(Map<dynamic,dynamic> donation, String recipient, String sender){
 
             // Generate a unique ID for the accepted donation
@@ -166,7 +163,6 @@ void createNotificationS({
     print('Error creating notification: $e');
   }
 }
-
 
   @override
   Widget build(BuildContext context) {
@@ -261,49 +257,14 @@ void createNotificationS({
                 rows:  
                 donations.map((donation){
                   return DataRow(cells:[
-                    DataCell(
-                      Text(
-                        donation['date'].toString(),
-                        style: GoogleFonts.kreon(
-                          color: Color(0x555555).withOpacity(1),
-                          fontSize: 17,
-                        ),
-                      ),
-                    ),
-                    DataCell(
-                      Text(
-                        donation['sender'].toString(),
-                        style: GoogleFonts.kreon(
-                          color: Color(0x555555).withOpacity(1),
-                          fontSize: 17,
-                        ),
-                      ),
-                    ),
-                    DataCell(
-                      Text(
-                        donation['senderEmail'].toString(),
-                        style: GoogleFonts.kreon(
-                          color: Color(0x555555).withOpacity(1),
-                          fontSize: 17,
-                        ),
-                      ),
-                    ),
+                    DataCell(Text(donation['date'].toString())),
+                    DataCell(Text(donation['sender'].toString())),
+                    DataCell(Text(donation['senderEmail'].toString())),
                     DataCell(
                       donation['amount'] != null
-                       ? Text(
-                          donation['amount'].toString(),
-                          style: GoogleFonts.kreon(
-                            color: Color(0x555555).withOpacity(1),
-                            fontSize: 17,
-                          ),
-                        ) 
-                       : Text(
-                          donation['donationType'].toString(),
-                          style: GoogleFonts.kreon(
-                            color: Color(0x555555).withOpacity(1),
-                            fontSize: 17,
-                          ),
-                        ),
+                       ? Text(donation['amount'].toString()) 
+                       :Text(donation['donationType'].toString())
+                      
                     ),
                     DataCell(
                       Row(
@@ -311,7 +272,7 @@ void createNotificationS({
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              acceptedDonation(donation,  donation['sender']);
+                              acceptedDonation(donation, donation['recipient'], donation['sender']);
                             },
                           style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFD9D9D9),
@@ -331,7 +292,7 @@ void createNotificationS({
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              unacceptedDonation(donation);
+                              unacceptedDonation(donation, donation['recipient']);
                             },
                           style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFD9D9D9),
