@@ -790,18 +790,21 @@ Future<String?> getAttendeeId(String fullName, String orgName, String eventName,
   
 }
 
+
 Future<List<Map<String, dynamic>>> fetchEventUnSubscribers(String orgName, String eventName, String userId, String eventId, String atendId) async {
   List<Map<String, dynamic>> unsubscribers = [];
 
   try {
     // Fetch attendees for the event
-    var snapshot = await FirebaseDatabase.instance.reference().child('events').child(eventId).child('attendees').orderByChild(atendId!).once();
+    var snapshot = await FirebaseDatabase.instance.reference().child('events').child(eventId).child('attendees').once();
 
     // Check if there are any attendees
     if (snapshot.snapshot.value != null) {
       // Extract attendees data
       Map<dynamic, dynamic> data = snapshot.snapshot.value as Map<dynamic, dynamic>;
       
+      print('Attendees data: $data');
+
       // Iterate over the attendees
       data.forEach((key, value) {
         // Check if the attendee has opted out of notifications
@@ -822,21 +825,23 @@ Future<List<Map<String, dynamic>>> fetchEventUnSubscribers(String orgName, Strin
   return unsubscribers;
 }
 
-Future<List<Map<String, dynamic>>> fetchAttenders(String userSubId, String orgName, String eventName, String eventId, String atendId) async {
+Future<List<Map<String, dynamic>>> fetchAttenders(String userSubId, String orgName, String eventName, String eventId) async {
   List<Map<String, dynamic>> subscribers = [];
 
   try {
     // Fetch the data snapshot from the database
-    var snapshotEvent = await FirebaseDatabase.instance.reference().child('events').child(eventId).child('attendees').orderByChild(atendId).once();
+    var snapshot = await FirebaseDatabase.instance.reference().child('events').child(eventId).child('attendees').once();
     
     // Access the snapshot from the event
-    DataSnapshot snapshot = snapshotEvent.snapshot;
+    DataSnapshot snapshotData = snapshot.snapshot;
 
     // Check if there are any attendees
-    if (snapshot.value != null) {
+    if (snapshotData.value != null) {
       // Extract attendees data
-      Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
-      print(snapshot.value);
+      Map<dynamic, dynamic> data = snapshotData.value as Map<dynamic, dynamic>;
+      
+      print('Attendees data: $data');
+
       // Iterate over the attendees
       data.forEach((key, value) async {
         // Check if the attendee has opted out of notifications
@@ -858,6 +863,7 @@ Future<List<Map<String, dynamic>>> fetchAttenders(String userSubId, String orgNa
 }
 
 
+
 Future<void> sendNotificationsToAttenders(String message, String orgName, String eventName) async {
   try {
     // Fetch subscription ID
@@ -872,7 +878,7 @@ Future<void> sendNotificationsToAttenders(String message, String orgName, String
       //final String? userName = await getUserNameFromDatabase(subscribedUserId);
       if (subscribedUserId != null) {
         // Fetch subscribers from the database
-        List<Map<String, dynamic>> subscribers = await fetchAttenders(subscribedUserId, orgName, eventName, eventId!, atendId!);
+        List<Map<String, dynamic>> subscribers = await fetchAttenders(subscribedUserId, orgName, eventName, eventId!);
         List<Map<String, dynamic>> unsubscribers = await fetchEventUnSubscribers(orgName, eventName, subscribedUserId, eventId!, atendId!);
         // Send notifications to subscribers who haven't opted out
         DatabaseReference notificationRef = FirebaseDatabase.instance.reference().child('notifications').push();
@@ -894,6 +900,7 @@ Future<void> sendNotificationsToAttenders(String message, String orgName, String
     print('Error sending notifications: $e');
   }
 }
+
 
 Future<List<GrantS>?> getGrantsFromDatabase(String uid) async {
   final ref = FirebaseDatabase.instance.reference();
