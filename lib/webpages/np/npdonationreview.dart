@@ -71,19 +71,26 @@ class _NPDonationReview extends State<NPDonationReview> {
   }
 
   //  when Accept button is pressed
-  void acceptedDonation(Map<dynamic,dynamic> donation, String recipient, String sender){
+  Future<void> acceptedDonation(Map<dynamic,dynamic> donation, String recipient, String sender) async {
 
-            // Generate a unique ID for the accepted donation
-    String donationId = DateTime.now().millisecondsSinceEpoch.toString();
+      
     //String decision = "accepted";
     if (uid!=null) {
-      setState(() async {
-        String decision = "accepted";
-        donations.remove(donation);
-        createNotificationS(userId: uid!, orgName: recipient, decision: decision);
-        final String? sendId = await getUserID(sender);
-        createNotification(userId: sendId!, orgName: recipient, decision: decision);
-      });
+
+ // Generate a unique ID for the accepted donation
+    String donationId = DateTime.now().millisecondsSinceEpoch.toString();
+
+    // Remove the donation from the list
+    donations.remove(donation);
+
+    // Update the UI after the removal
+    setState(() {});
+
+    // Notify user and sender
+    String decision = "accepted";
+    createNotificationS(userId: uid!, orgName: recipient, decision: decision);
+    final String? sendId = await getUserID(sender);
+    createNotification(userId: sendId!, orgName: recipient, decision: decision);
 
    
       // save the accepted donation  to the accpeted_donation database of non-profit
@@ -98,17 +105,25 @@ class _NPDonationReview extends State<NPDonationReview> {
     }
   }
   // when Cancel button is press
-  void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient, String sender){
+  void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient, String sender) async {
     //String decision = "rejected";
+            final String? sendId = await getUserID(sender);
+                    String decision = "rejected";
+
+
     if (uid != null){
-      setState(() async {
-        String decision = "rejected";
-        donations.remove(donation);
-        createNotificationS(userId: uid!, orgName: recipient, decision: decision);
-        final String? sendId = await getUserID(sender);
-        //String decision = "rejected";
-        createNotification(userId: sendId!, orgName: recipient, decision: decision);
+                     donations.remove(donation);
+
+      setState(()  { 
+
+       
+
       });
+       createNotificationS(userId: uid!, orgName: recipient, decision: decision);
+        createNotification(userId: sendId!, orgName: recipient, decision: decision);
+
+                           
+
       //remove the donation from the pending_donation
       DatabaseReference ref1 = FirebaseDatabase.instance.ref('pending_donations');
       ref1.child(donation['pendingDonationID']).remove();
