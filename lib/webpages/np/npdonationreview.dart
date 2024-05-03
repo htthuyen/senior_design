@@ -75,9 +75,10 @@ class _NPDonationReview extends State<NPDonationReview> {
 
             // Generate a unique ID for the accepted donation
     String donationId = DateTime.now().millisecondsSinceEpoch.toString();
-    String decision = "accepted";
+    //String decision = "accepted";
     if (uid!=null) {
       setState(() async {
+        String decision = "accepted";
         donations.remove(donation);
         final String? sendId = await getUserID(sender);
         createNotificationS(userId: uid!, orgName: sender, decision: decision);
@@ -294,6 +295,7 @@ void createNotificationS({
                           ),
                           ElevatedButton(
                             onPressed: () {
+                              unacceptedDonation(donation, donation['recipient'], donation['sender']);
                               unacceptedDonation(donation, donation['recipient'], donation['sender']);
                             },
                           style: ElevatedButton.styleFrom(
