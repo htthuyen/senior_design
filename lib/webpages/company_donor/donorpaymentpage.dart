@@ -65,6 +65,8 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
                 'donorcomID': uid,
             });
             createNotification(userId: uid!, recipient: recipient.text, recipientEmail: recipientEmail.text);
+            final String? recipientNotId = await getUserID(receiver);
+            createNotificationS(userId: recipientNotId!, sender: sender, recipient: recipient.text, recipientEmail: recipientEmail.text);
     }
   } catch (error){
     print('$error');
@@ -85,6 +87,34 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
     final notificationData = {
       'type': 'monetary donation',
       'detail': 'You have sent a monetary donation to $recipient',
+      'recipient': recipient,
+      'recipientEmail': recipientEmail,
+      'userId': userId,
+    };
+
+    notificationsRef.push().set(notificationData).then((_) {
+      print('Notification created successfully.');
+    }).catchError((error) {
+      print('Error creating notification: $error');
+    });
+  } catch (e) {
+    print('Error creating notification: $e');
+  }
+}
+  void createNotificationS({
+  required String userId, // Assuming you have the userId
+  // required String type,
+  // required String detail,
+  required String recipient,
+  required String sender,
+  required String recipientEmail
+}) {
+  try {
+    final notificationsRef = FirebaseDatabase.instance.reference().child('notifications');
+    
+    final notificationData = {
+      'type': 'monetary donation received',
+      'detail': '$sender has sen you sent a monetary donation',
       'recipient': recipient,
       'recipientEmail': recipientEmail,
       'userId': userId,
