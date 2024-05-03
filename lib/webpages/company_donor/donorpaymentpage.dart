@@ -144,7 +144,7 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
                   },
                   keyboardType: TextInputType.name,
                   decoration: const InputDecoration(
-                    labelText: "Fullname*",
+                    hintText: "Fullname*",
           
                   ),
                 ),
@@ -152,7 +152,7 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
                   controller: company,
                   keyboardType: TextInputType.name,
                   decoration: const InputDecoration(
-                    labelText: "Company",
+                    hintText: "Company",
           
                      
                   ),
@@ -177,7 +177,7 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
                   controller: email,
                   keyboardType: TextInputType.name,
                   decoration: const InputDecoration(
-                    labelText: "Email*",
+                    hintText: "Email*",
                   ),
                 ),
                          
@@ -203,7 +203,7 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
                     dateCtl.text = date.toIso8601String().replaceRange(10,23, '');
                   },
                   decoration: const InputDecoration(
-                    labelText: "Date",
+                    hintText: "Date",
                   ),
                 ),               
               ],
@@ -223,7 +223,7 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
                 controller:  recipient,
                 keyboardType: TextInputType.name,
                 decoration: const InputDecoration(
-                  labelText: "Recipient*",
+                  hintText: "Recipient*",
                    
                  ),
               ),
@@ -246,7 +246,7 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
                 controller: amount,
                 maxLengthEnforcement: MaxLengthEnforcement.enforced,
                 decoration: const InputDecoration(
-                  labelText: "Amount*",
+                  hintText: "Amount*",
                 
                 ),
               ),
@@ -271,7 +271,7 @@ class _DonorPaymentPage extends State<DonorPaymentPage>{
                   controller: recipientEmail,
                   keyboardType: TextInputType.name,
                   decoration: const InputDecoration(
-                    labelText: "Recipient Email*",
+                    hintText: "Recipient Email*",
                   ),
                 ),
                          
