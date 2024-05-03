@@ -1,11 +1,13 @@
+
+
+
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:givehub/authentication/auth.dart';
-import 'package:givehub/webcomponents/np_topbar.dart';
-
-import '../../webcomponents/usertopbar.dart';
+import 'auth.dart';
+import 'np_topbar.dart';
+import 'usertopbar.dart';
 
 class NPDonationReview extends StatefulWidget {
   const NPDonationReview({super.key});
@@ -70,7 +72,7 @@ class _NPDonationReview extends State<NPDonationReview> {
     }
   }
 
- void acceptedDonation(Map<dynamic, dynamic> donation, String recipient, String sender) async {
+  void acceptedDonation(Map<dynamic, dynamic> donation, String recipient, String sender) async {
   String decision = "accepted";
   if (uid != null) {
     final String? sendId = await getUserID(sender);
@@ -108,11 +110,13 @@ void unacceptedDonation(Map<dynamic, dynamic> donation, String recipient, String
   }
 }
 
+
 void createNotification({
   required String userId, // Assuming you have the userId
   // required String type,
   // required String detail,
   required String orgName,
+  required String sender,
   required String decision
 }) {
   try {
@@ -138,7 +142,7 @@ void createNotificationS({
   required String userId, // Assuming you have the userId
   // required String type,
   // required String detail,
-  
+  required String sender,
   required String orgName,
   required String decision
 }) {
@@ -147,7 +151,7 @@ void createNotificationS({
     
     final notificationData = {
       'type': 'donation $decision',
-      'detail': 'You have $decision the donation from $orgName',
+      'detail': 'You have $decision the donation from $sender',
       
       'userId': userId,
     };
@@ -290,7 +294,6 @@ void createNotificationS({
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              unacceptedDonation(donation, donation['recipient'], donation['sender']);
                               unacceptedDonation(donation, donation['recipient'], donation['sender']);
                             },
                           style: ElevatedButton.styleFrom(
