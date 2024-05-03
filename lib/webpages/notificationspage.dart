@@ -200,7 +200,7 @@ Future<void> removeNotificationFromDatabase(String userId) async {
                   itemCount: notifications.length,
                   itemBuilder: (context, index) {
                     return Dismissible(
-                      key: Key(notifications[index].userID.toString()), 
+                     key: UniqueKey(), 
                       direction: DismissDirection.endToStart,
                      onDismissed: (direction) async {
                         try {
