@@ -535,7 +535,8 @@ void createNotification({
       
       
       await eventRef.update(eventData);
-      
+      String attendMessage = 'Subscription: $newOrgName was updated by the organizer: $newEventName.';
+      await sendNotificationsToAttenders(attendMessage, newOrgName, newEventName);
      
     } catch (e) {
       
