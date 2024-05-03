@@ -131,14 +131,42 @@ class _EventHistoryState extends State<EventHistory> {
               rows: events.isNotEmpty
                   ? events.map((event) {
                       return DataRow(cells: [
-                        DataCell(Text(event.date)),
-                        DataCell(Text(event.orgName)),
-                        DataCell(Text(event.eventName)),
+                        DataCell(
+                          Text(
+                            event.date,
+                            style: GoogleFonts.kreon(
+                              color: Color(0x555555).withOpacity(1),
+                              fontSize: 17,
+                            ),
+                          ),
+                        ),
+                        DataCell(
+                          Text(
+                            event.orgName,
+                            style: GoogleFonts.kreon(
+                              color: Color(0x555555).withOpacity(1),
+                              fontSize: 17,
+                            ),
+                          ),
+                        ),
+                        DataCell(
+                          Text(
+                            event.eventName,
+                            style: GoogleFonts.kreon(
+                              color: Color(0x555555).withOpacity(1),
+                              fontSize: 17,
+                            ),
+                          ),
+                        ),
                       ]);
                     }).toList()
                   : [
                       DataRow(cells: [
-                        DataCell(Text('No events found')),
+                        DataCell(Text('No events found', 
+                        style: GoogleFonts.kreon(
+                          color: Color(0x555555).withOpacity(1),
+                          fontSize: 17,
+                        ),)),
                         DataCell(Text('')),
                         DataCell(Text('')),
                       ]),
