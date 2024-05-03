@@ -273,13 +273,13 @@ void createNotification({
   }
 
   void _showEditEventDialog(BuildContext context, String eventId) {
-    TextEditingController eventNameController = TextEditingController();
-    TextEditingController orgNameController = TextEditingController();
-    TextEditingController dateController = TextEditingController();
-    TextEditingController timeController = TextEditingController();
-    TextEditingController locationController = TextEditingController();
-    TextEditingController contactController = TextEditingController();
-    TextEditingController descriptionController = TextEditingController();
+    TextEditingController eventNameController = TextEditingController(text: eventName);
+    TextEditingController orgNameController = TextEditingController(text: orgName);
+    TextEditingController dateController = TextEditingController(text: date);
+    TextEditingController timeController = TextEditingController(text: time);
+    TextEditingController locationController = TextEditingController(text: location);
+    TextEditingController contactController = TextEditingController(text: contact);
+    TextEditingController descriptionController = TextEditingController(text: description);
 
     showDialog(
       context: context,
