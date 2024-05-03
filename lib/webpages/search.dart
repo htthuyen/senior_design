@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:givehub/webcomponents/donor_company_topbar.dart';
 import 'package:givehub/webcomponents/np_topbar.dart';
 import 'package:givehub/webcomponents/usertopbar.dart';
+import 'package:givehub/webpages/company_donor/myeventspage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../authentication/auth.dart';
-import '../webcomponents/usertopbar.dart';
 import 'company_donor/companyprofilesearch.dart';
 import 'company_donor/donorprofilesearch.dart';
 import 'np/npprofilesearch.dart';
@@ -286,7 +286,10 @@ class _SearchPage extends State<SearchPage> {
                                       size: 50,
                                     ),
                                     onPressed: () {
-                                      Navigator.pushNamed(context, '/myevents');
+                                      Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                            builder: (context) => MyEventsPage()));
                                     },
                                   ),
                                 ),

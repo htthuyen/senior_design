@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:givehub/webcomponents/topbar.dart';
+import 'package:givehub/webpages/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -123,8 +124,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 SizedBox(height: 10),
                 TextButton(
                   onPressed: () {
-                    // Add functionality to sign up button
-                    Navigator.pushNamed(context, '/signup');
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => SignUp()));
                   },
                   child: const Text(
                     "Don't have an account? Sign up",

@@ -1,17 +1,16 @@
 import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:givehub/authentication/auth.dart';
 import 'package:givehub/webcomponents/donor_company_topbar.dart';
+import 'package:givehub/webcomponents/profilepicture.dart';
 import 'package:givehub/webcomponents/usertopbar.dart';
-import '../../webcomponents/np_topbar.dart';
-import '../np/npprofilepage.dart';
-import 'companyprofilepage.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'donorcompanydonationhistory.dart';
 import 'mygrants.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:givehub/webcomponents/profilepicture.dart';
-import 'package:givehub/authentication/auth.dart';
 
 class DonorProfilePage extends StatefulWidget {
   @override
@@ -54,10 +53,10 @@ class _DonorProfilePageState extends State<DonorProfilePage> {
         //final userCompanyInfo = data['companyInfo'] as String;
         
         setState((){
-          name = '$userName';
-          email = '$userEmail';
-          member = 'Member Since: ' + '$userMembership';
-          phone = '$userPhone';
+          name = userName;
+          email = userEmail;
+          member =  userMembership;
+          phone = userPhone;
           companyInfo = 'Company Info: ';
 
         });
@@ -117,21 +116,21 @@ class _DonorProfilePageState extends State<DonorProfilePage> {
                       name,
                       style: GoogleFonts.oswald(fontSize: 30, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 30), 
-                    Text(
-                      phone,
-                      style: GoogleFonts.oswald(fontSize: 28),
-                    ),
+                    // SizedBox(height: 30), 
+                    // Text(
+                    //   phone,
+                    //   style: GoogleFonts.oswald(fontSize: 28),
+                    // ),
                     SizedBox(height: 30), 
                     Text(
                       email,
                       style: GoogleFonts.oswald(fontSize: 28),
                     ),
-                    SizedBox(height: 30),
-                    Text(
-                      member,
-                      style: GoogleFonts.oswald(fontSize: 28),
-                    ),
+                    // SizedBox(height: 30),
+                    // Text(
+                    //   member,
+                    //   style: GoogleFonts.oswald(fontSize: 28),
+                    // ),
                     SizedBox(height: 30), 
                     Text(
                       companyInfo,

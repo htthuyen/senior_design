@@ -10,8 +10,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../authentication/auth.dart';
 import '../../webcomponents/profilepicture.dart';
-import '../company_donor/companyprofilepage.dart';
-import '../company_donor/donorprofile.dart';
 import 'npdonationhistory.dart';
 
 
@@ -49,6 +47,8 @@ class _NPProfilePageState extends State<NPProfilePage> {
           final data = Map<String, dynamic>.from(event.snapshot.value as dynamic);
           final userEmail = data['email'] as String? ?? '';
           final userNeeds = data['selectedNeeds'];
+          final userAbout = data['aboutUs'];
+          final userWebsite = data['website'];
           final memberSince = data['memberSince'] as String? ?? ''; // Provide a default value if null
           String userWeAreSeeking = '';
 
@@ -68,10 +68,10 @@ class _NPProfilePageState extends State<NPProfilePage> {
           setState(() {
             name = userName;
             email = userEmail;
-            aboutUs = 'Give a 10 word description of your non-profit.';
+            aboutUs = userAbout;
             weAreSeeking = 'We are currently seeking: ' + trimmedUserWeAreSeeking;
             member =  memberSince;
-            website = 'website';
+            website = userWebsite;
           });
         }
       });
@@ -181,7 +181,7 @@ class _NPProfilePageState extends State<NPProfilePage> {
                   onPressed: () {
                     _updateProfile(
                       newName: nameController.text,
-                      newEmail: 'new@example.com',
+                      newEmail: emailController.text,
                       //newPhone: '1234567890',
                       newAboutUs: aboutUsController.text,
                       //newWeAreSeeking: weAreSeekingController.text,
