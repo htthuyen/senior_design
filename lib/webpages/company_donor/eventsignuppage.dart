@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:givehub/webcomponents/donor_company_topbar.dart';
 import 'package:givehub/webcomponents/usertopbar.dart';
+import 'package:givehub/webpages/company_donor/myeventspage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../authentication/auth.dart';
@@ -668,6 +669,9 @@ class _EventSignUpPageState extends State<EventSignUpPage> {
                                       onPressed: () {
                                         submitForm(context, chosen.getOrgName(), chosen.getEventName(), uid!);
                                         createNotification(userId: uid!, orgName: chosen.getOrgName(), eventName: chosen.getEventName());
+                                        Navigator.push(context, new MaterialPageRoute(
+                                                    builder: (context) =>
+                                                    MyEventsPage()));
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.white.withOpacity(1),
@@ -706,6 +710,9 @@ class _EventSignUpPageState extends State<EventSignUpPage> {
                                               TextButton(
                                                 onPressed: () {
                                                   Navigator.pop(context);
+                                                  Navigator.push(context, new MaterialPageRoute(
+                                                    builder: (context) =>
+                                                    CurrentEventsPage()));
                                                 },
                                                 child: Text(
                                                   'OK',
