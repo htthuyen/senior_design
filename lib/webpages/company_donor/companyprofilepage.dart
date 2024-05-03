@@ -93,8 +93,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
             
             name = newName;
             email = newEmail;
-            aboutUs = newAboutUs;
-            website = newWebsite;
+            companyInfo = newCompanyInfo;
           
           });
         })

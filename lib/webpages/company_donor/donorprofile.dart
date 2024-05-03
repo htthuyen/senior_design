@@ -288,8 +288,7 @@ void _showEditProfileDialog(BuildContext context) {
             
             name = newName;
             email = newEmail;
-            aboutUs = newAboutUs;
-            website = newWebsite;
+            companyInfo = newCompanyInfo;
           
           });
         })
