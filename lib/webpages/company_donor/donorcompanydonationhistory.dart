@@ -139,17 +139,48 @@ class _DonationHistoryDonorCompanyState extends State<DonationHistoryDonorCompan
 
                 rows:  donations.map((donation){
                   return DataRow(cells:[
-                    DataCell(Text(donation['date'].toString())),
+                    DataCell(
+                      Text(
+                        donation['date'].toString(),
+                        style: GoogleFonts.kreon(
+                          color: Color(0x555555).withOpacity(1),
+                          fontSize: 17,
+                        ),
+                      ),
+                    ),
                     DataCell(
                       donation['recipient'] != null
-                      ? Text(donation['recipient'].toString())
-                      : Text(donation['recipientEmail'].toString()),
-
+                      ? Text(
+                        donation['recipient'].toString(),
+                        style: GoogleFonts.kreon(
+                          color: Color(0x555555).withOpacity(1),
+                          fontSize: 17,
+                        ),
+                      )
+                      : Text(
+                        donation['recipientEmail'].toString(),
+                        style: GoogleFonts.kreon(
+                          color: Color(0x555555).withOpacity(1),
+                          fontSize: 17,
+                        ),
+                      ),
                     ),
                     DataCell(
                       donation['amount'] != null
-                      ? Text(donation['amount'].toString())
-                      : Text(donation['donationType'].toString())
+                      ? Text(
+                          donation['amount'].toString(),
+                          style: GoogleFonts.kreon(
+                            color: Color(0x555555).withOpacity(1),
+                            fontSize: 17,
+                          ),
+                        )
+                      : Text(
+                          donation['donationType'].toString(),
+                          style: GoogleFonts.kreon(
+                            color: Color(0x555555).withOpacity(1),
+                            fontSize: 17,
+                          ),
+                        ),
                       ),
                   ]);
                 }).toList(),
