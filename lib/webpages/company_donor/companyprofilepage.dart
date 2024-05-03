@@ -153,7 +153,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: companyInfoController,
-                      decoration: InputDecoration(hintText: 'Company Info'),
+                      decoration: InputDecoration(hintText: 'Company Description and Website'),
                     ),
                   ],
                 ),
@@ -254,26 +254,26 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
                       children: [
                         Text(
                           name,
-                          style: GoogleFonts.oswald(fontSize: 30, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.oswald(fontSize: 34, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 30), 
                         Text(
-                          phone,
+                          'Company Info: ' + companyInfo,
+                          style: GoogleFonts.oswald(fontSize: 28, fontWeight: FontWeight.w600),
+                        ),
+                        SizedBox(height: 30), 
+                        Text(
+                          'Phone: ' + phone,
                           style: GoogleFonts.oswald(fontSize: 28),
                         ),
                         SizedBox(height: 30), 
                         Text(
-                          email,
+                          'Email: ' + email,
                           style: GoogleFonts.oswald(fontSize: 28),
                         ),
                         SizedBox(height: 30),
                         Text(
                           'Member Since: ' + member,
-                          style: GoogleFonts.oswald(fontSize: 28),
-                        ),
-                        SizedBox(height: 30), 
-                        Text(
-                          'Company Info: ' + companyInfo,
                           style: GoogleFonts.oswald(fontSize: 28),
                         ),
                       ],

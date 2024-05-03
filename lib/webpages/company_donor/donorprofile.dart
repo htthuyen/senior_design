@@ -129,23 +129,23 @@ class _DonorProfilePageState extends State<DonorProfilePage> {
                   children: [
                     TextFormField(
                       controller: nameController,
-                      decoration: InputDecoration(labelText: 'Name'),
+                      decoration: InputDecoration(hintText: 'Name'),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: emailController,
-                      decoration: InputDecoration(labelText: 'Email'),
+                      decoration: InputDecoration(hintText: 'Email'),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: phoneController,
-                      decoration: InputDecoration(labelText: 'Phone'),
+                      decoration: InputDecoration(hintText: 'Phone'),
                     ),
                     
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: companyInfoController,
-                      decoration: InputDecoration(labelText: 'Company Info (or Additional Info About You)'),
+                      decoration: InputDecoration(hintText: 'Additional Info About You'),
                       //key: ,
                     ),
                   ],
@@ -230,26 +230,26 @@ class _DonorProfilePageState extends State<DonorProfilePage> {
                   children: [
                     Text(
                       name,
-                      style: GoogleFonts.oswald(fontSize: 30, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.oswald(fontSize: 34, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 30), 
                     Text(
-                      phone,
+                      'About: ' + companyInfo,
+                      style: GoogleFonts.oswald(fontSize: 28, fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(height: 30), 
+                    Text(
+                      'Phone: ' + phone,
                       style: GoogleFonts.oswald(fontSize: 28),
                     ),
                     SizedBox(height: 30), 
                     Text(
-                      email,
+                      'Email: ' + email,
                       style: GoogleFonts.oswald(fontSize: 28),
                     ),
                     SizedBox(height: 30),
                     Text(
                       'Memeber since: $member',
-                      style: GoogleFonts.oswald(fontSize: 28),
-                    ),
-                    SizedBox(height: 30), 
-                    Text(
-                      companyInfo,
                       style: GoogleFonts.oswald(fontSize: 28),
                     ),
                   ],

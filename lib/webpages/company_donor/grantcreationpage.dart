@@ -126,7 +126,7 @@ void createNotification({
                       },
                       keyboardType: TextInputType.name,
                       decoration: const InputDecoration(
-                        labelText: 'Grant Name',
+                        hintText: 'Grant Name',
                         fillColor: Color.fromRGBO(202, 235, 242, 0.9)
                         
                       ),
@@ -145,7 +145,7 @@ void createNotification({
                         decimal: true,
                       ),
                       decoration: const InputDecoration(
-                        labelText: 'Grant Amount',
+                        hintText: 'Grant Amount',
                         fillColor: Color.fromRGBO(202, 235, 242, 0.9)
                        
                       ),
@@ -194,7 +194,7 @@ void createNotification({
                             grantDeadline.text = date.toIso8601String().replaceRange(10, 23, '');
                           },
                           decoration: const InputDecoration(
-                            labelText: 'Grant Deadline',
+                            hintText: 'Grant Deadline',
                             fillColor: Color.fromRGBO(202, 235, 242, 0.9)
                 
                           ),
@@ -209,7 +209,7 @@ void createNotification({
                           },
                           keyboardType: TextInputType.text,
                           decoration: const InputDecoration(
-                            labelText: 'Payment Details',
+                            hintText: 'Payment Details',
                             fillColor: Color.fromRGBO(202, 235, 242, 0.9)
                 
                           ),
@@ -253,7 +253,7 @@ void createNotification({
                             },
                             keyboardType: TextInputType.name,
                             decoration: const InputDecoration(
-                              labelText: 'Name',
+                              hintText: 'Name',
                               fillColor: Color.fromRGBO(202, 235, 242, 0.9)
                 
                             ),
@@ -273,7 +273,7 @@ void createNotification({
                               return null;
                             },
                             decoration: const InputDecoration(
-                              labelText: 'Email',
+                              hintText: 'Email',
                               fillColor: Color.fromRGBO(202, 235, 242, 0.9)
                 
                             ),
@@ -294,7 +294,7 @@ void createNotification({
                               return null;
                             },
                             decoration: const InputDecoration(
-                              labelText: 'Phone',
+                              hintText: 'Phone',
                               fillColor: Color.fromRGBO(202, 235, 242, 0.9)
                 
                             ),
@@ -317,7 +317,7 @@ void createNotification({
                         return null;
                       },
                       decoration: const InputDecoration(
-                        labelText: 'Eligibility',
+                        hintText: 'Eligibility',
                         fillColor: Color.fromRGBO(202, 235, 242, 0.9)
                 
                       ),
@@ -333,8 +333,7 @@ void createNotification({
                       },
                           
                       decoration: const InputDecoration(
-                        labelText: 'Further Eligibility Requirements ',
-                        hintText: 'URL',
+                        hintText: 'Further Eligibility Requirements: URL',
                         fillColor: Color.fromRGBO(202, 235, 242, 0.9)
                 
                       ),

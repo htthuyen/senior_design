@@ -330,16 +330,16 @@ class _NPProfilePageState extends State<NPProfilePage> {
                       children: [
                         Text(
                           name,
-                          style: GoogleFonts.oswald(fontSize: 30, fontWeight: FontWeight.bold, color:Color(0x555555).withOpacity(1))
+                          style: GoogleFonts.oswald(fontSize: 34, fontWeight: FontWeight.bold, color:Color(0x555555).withOpacity(1))
                         ),
                         SizedBox(height: 30), 
                         Text(
-                          email,
-                          style: GoogleFonts.oswald(fontSize: 28, color:Color(0x555555).withOpacity(1))
+                          'About: ' + aboutUs,
+                          style: GoogleFonts.oswald(fontSize: 28, fontWeight: FontWeight.w600, color:Color(0x555555).withOpacity(1))
                         ),
                         SizedBox(height: 30), 
                         Text(
-                          'About us: ' + aboutUs,
+                          'Email:' + email,
                           style: GoogleFonts.oswald(fontSize: 28, color:Color(0x555555).withOpacity(1))
                         ),
                         SizedBox(height: 30), 
