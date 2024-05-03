@@ -181,7 +181,10 @@ class _NonMonDonState extends State<NonMonDon> {
                                         width: 250,
                                         child: TextFormField(
                                           validator: (s){
-                                            return 'This field is required';
+                                            if (s!.isWhitespace()){
+                                                return 'This field is required';
+                                              }
+                                              return null;
                                           },
                                           style: GoogleFonts.kreon(
                                             color: const Color(0x555555).withOpacity(1),
