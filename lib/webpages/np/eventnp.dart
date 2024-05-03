@@ -317,7 +317,26 @@ void createNotification({
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    
+                    TextFormField(
+                      decoration: InputDecoration(labelText: 'Event Name', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100, color: Color(0x555555).withOpacity(1))),
+                      style: GoogleFonts.oswald(
+                        color: Color(0x555555).withOpacity(1), 
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                      controller: eventNameController,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      decoration: InputDecoration(labelText: 'Organization Name', labelStyle: GoogleFonts.oswald(fontWeight: FontWeight.w100,color: Color(0x555555).withOpacity(1))),
+                      style: GoogleFonts.oswald(
+                        color: Color(0x555555).withOpacity(1), 
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                      controller: orgNameController,
+                    ),
+                    const SizedBox(height: 20),
                    TextFormField(
                       decoration: InputDecoration(
                         labelText: 'Date',
@@ -440,7 +459,8 @@ void createNotification({
                 TextButton(
                   onPressed: () {
                     
-                    if (
+                    if (eventNameController.text.isEmpty ||
+                        orgNameController.text.isEmpty ||
                         dateController.text.isEmpty || timeController.text.isEmpty ||
                         locationController.text.isEmpty ||
                         contactController.text.isEmpty ||
@@ -514,8 +534,9 @@ void createNotification({
       
       // Create a map to hold the updated event data
       Map<String, dynamic> eventData = {
-        'eventName': eventName,
-        'orgName': orgName,
+        'eventId': eventId,
+        'eventName': newEventName,
+        'orgName': newOrgName,
         'dateTime': newDate,
         'time': newTime,
         'location': newLocation,
@@ -527,9 +548,6 @@ void createNotification({
       createNotification(userId: uid!, orgName: newOrgName, message: message);
       
       
-      String attendMessage = 'Subscription: ${eventData['eventName']} was updated by the organizer: ${eventData['orgName']}.';
-      await sendNotificationsToAttenders(attendMessage, eventData['orgName'], eventData['eventName']);
-     
       await eventRef.update(eventData);
       
      
