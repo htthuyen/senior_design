@@ -1,17 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:givehub/webcomponents/donor_company_topbar.dart';
-import 'package:givehub/webcomponents/np_topbar.dart';
-import 'package:givehub/webcomponents/usertopbar.dart';
-import 'package:givehub/webpages/company_donor/myeventspage.dart';
+import 'package:givehub/donorprofilesearch.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../authentication/auth.dart';
-import 'company_donor/companyprofilesearch.dart';
-import 'company_donor/donorprofilesearch.dart';
-import 'np/npprofilesearch.dart';
-
+import 'auth.dart';
+import 'companyprofilesearch.dart';
+import 'npprofilesearch.dart';
+import 'donorprofilesearch.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -23,15 +18,17 @@ class User {
   String userName;
   //String aboutUs;
   String userId;
+  String email;
   String userType;
   bool isFavorite; 
 
-  User({required this.userName,  required this.userId, required this.userType, required this.isFavorite});
+  User({required this.userName,  required this.userId, required this.email, required this.userType, required this.isFavorite});
 
   Map<String, dynamic> toJson() {
     return {
       'userId': userId,
-      'userName': userName,
+      'userName': name,
+      'email': email,
       //'aboutUs': aboutUs,
       'userType': userType,
       //'isFavorite': isFavorite,
@@ -44,16 +41,15 @@ class _SearchPage extends State<SearchPage> {
   List<User> _foundUsers = [];
   final DatabaseReference _database = FirebaseDatabase.instance.reference();
 
-  String? usertype;
+
   @override
   void initState() {
     //_foundUsers = _allUsers;
     super.initState();
-    getUser().then((_) async {
+    getUser().then((_) {
       if (uid != null) {
         //getGrantsFromDatabase(uid!); 
         getUsersFromDatabase(uid!);
-        usertype = await getUserTypeFromDatabase(uid!);
       } else {
         showSnackBar(context, 'User ID not found. Please log in again.');
         Navigator.pushReplacementNamed(context, '/login'); 
@@ -69,6 +65,7 @@ class _SearchPage extends State<SearchPage> {
           _foundUsers = users.map((userData) => User(
             userId: userData['userId'],
             userName: userData['userName'],
+            email: userData['email'],
             //aboutUs: userData['aboutUs'],
             userType: userData['userType'],
             isFavorite: false,
@@ -100,11 +97,13 @@ class _SearchPage extends State<SearchPage> {
             if (userData != null) {
               String userName = userData['name'] ?? '';
               String userType = userData['userType'] ?? '';
+              String email = userData['email'] ?? '';
 
               Map<String, dynamic> allUserData = {
                 'userId': key,
                 'userName': userName,
-                'userType': userType
+                'userType': userType,
+                'email': email
               };
 
               allUsersList.add(allUserData);
@@ -159,23 +158,55 @@ class _SearchPage extends State<SearchPage> {
     final updateSubData = {
       'orgName': name,
       'orgEmail': email,
+      'type': 'user subscription',
+      'userId': uid,
       // Add any additional subscription data fields here
     };
 
-    // Get a reference to the user's node in the database
-    final userRef = _database.child('users').child(currentUserUid);
+    // Get a reference to the subscriptions table in the database
+    final subscriptionsRef = _database.child('subscriptions');
 
-    // Generate a unique key for the subscription using push
-    final subscriptionRef = userRef.child('subscriptions').push();
+    // Use the userId as the unique key for the subscription
+    final subscriptionRef = subscriptionsRef.push();
 
-    // Update the subscription data in the database
+    // Update the subscription data in the subscriptions table
     subscriptionRef.set(updateSubData)
       .then((_) {
         print('Subscription added successfully.');
+
+        // Now, you can perform additional actions if needed
+        createNotification(userId: currentUserUid, orgName: name);
       })
       .catchError((error) {
         print('Error adding subscription: $error');
       });
+  }
+}
+
+
+void createNotification({
+  required String userId, // Assuming you have the userId
+  // required String type,
+  // required String detail,
+  required String orgName,
+}) {
+  try {
+    final notificationsRef = FirebaseDatabase.instance.reference().child('notifications');
+    
+    final notificationData = {
+      'type': 'subscription',
+      'detail': 'You have subscribed to $orgName',
+      'orgName': orgName,
+      'userId': userId,
+    };
+
+    notificationsRef.push().set(notificationData).then((_) {
+      print('Notification created successfully.');
+    }).catchError((error) {
+      print('Error creating notification: $error');
+    });
+  } catch (e) {
+    print('Error creating notification: $e');
   }
 }
 
@@ -191,8 +222,7 @@ class _SearchPage extends State<SearchPage> {
       ),
       home: Scaffold(
         //the top portion of the webpage
-        appBar: UserTopBar(),
-        endDrawer: (usertype?.toLowerCase() == 'nonprofit organization') ? NpTopBar() : DonorComTopBar(),
+        appBar:UserTopBar(),
         body: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(
@@ -286,10 +316,7 @@ class _SearchPage extends State<SearchPage> {
                                       size: 50,
                                     ),
                                     onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                            builder: (context) => MyEventsPage()));
+                                      Navigator.pushNamed(context, '/myevents');
                                     },
                                   ),
                                 ),
@@ -318,7 +345,7 @@ class _SearchPage extends State<SearchPage> {
                                       if (_foundUsers[index].isFavorite) {
                                         createSubscriptionAndPutInDatabase(
                                           name: _foundUsers[index].userName, // Assuming userName represents the nonprofit name
-                                          email: 'nonprofit@example.com', // Replace with the nonprofit's email
+                                          email: _foundUsers[index].email,
                                         );
                                       }
                                     });
@@ -359,14 +386,7 @@ class _SearchPage extends State<SearchPage> {
                                       ),
                                     );
                                     } else if (userType == 'company'){
-                                      // Handle other user types or default case
-                                      // For example, navigate to a generic profile page
                                       
-                                      /*Navigator.pushNamed(
-                                        context,
-                                        '/companysearch',
-                                        arguments: user.userId,
-                                      );*/
                                       Navigator.push(
                                       context,
                                       MaterialPageRoute(
