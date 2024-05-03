@@ -2,26 +2,12 @@
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:givehub/np_history.dart';
-import 'package:givehub/search.dart';
-import 'package:givehub/subscriptions.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'auth.dart';
-import 'companyprofilepage.dart';
-import 'create_event.dart';
-import 'donor_company_donationhistory.dart';
-import 'donorprofile.dart';
-import 'events_np.dart';
-import 'grantapp.dart';
-import 'myeventspage.dart';
-import 'needs.dart';
-import 'notificationspage.dart';
-import 'np_applicationstatus.dart';
-import 'np_donationreview.dart';
-import 'npprofilepage.dart';
-import 'events.dart' as event_lib;
+
+import '../../authentication/auth.dart';
+import '../../webcomponents/np_topbar.dart';
+import '../../webcomponents/usertopbar.dart';
+
 
 
 class EventforNP {
